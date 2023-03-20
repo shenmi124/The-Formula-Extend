@@ -112,7 +112,7 @@ var systemComponents = {
 			<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 		</span>
 		<br>
-		<h2 class="overlayThing" id="points">n({{format(player.points)}}{{tmp.timeSpeed.gt(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2><br>
+		<h2 class="overlayThing" id="points">n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2><br>
 		<span class="overlayThing" style="font-size: 18px;" v-if="player.int.unlocked && player.int.value.gt(0)">n(t) = <span v-html="displayIntFormula()"></span></span>
 		<span class="overlayThing" style="font-size: 20px;" v-if="!(player.int.unlocked && player.int.value.gt(0))">n(t) = <span v-html="displayFormula()"></span></span>
 		<br>
@@ -150,24 +150,24 @@ var systemComponents = {
     'options-tab': {
         template: `
         <table>
-            <tr>
-                <td><button class="opt" onclick="save()">Save</button></td>
-                <td><button class="opt" onclick="toggleOpt('autosave')">Autosave: {{ options.autosave?"ON":"OFF" }}</button></td>
-                <td><button class="opt" onclick="hardReset()">HARD RESET</button></td>
+			<tr>
+				<td><button class="opt" onclick="save()">保存</button></td>
+				<td><button class="opt" onclick="toggleOpt('autosave')">自动保存: {{ options.autosave?"开":"关" }}</button></td>
+				<td><button class="opt" onclick="hardReset()">硬重置</button></td>
+			</tr>
+			<tr>
+				<td><button class="opt" onclick="exportSave()">导出</button></td>
+				<td><button class="opt" onclick="importSave()">导入</button></td>
+				<td><button class="opt" onclick="toggleOpt('offlineProd')">离线: {{ options.offlineProd?"开":"关" }}</button></td>
+			</tr>
+			<tr>
+				<td><button class="opt" onclick="switchTheme()">主题: {{ getThemeName() }}</button></td>
+                <td><button class="opt" onclick="adjustMSDisp()">显示里程碑: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('hqTree')">高质量树: {{ options.hqTree?"开":"关" }}</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
-                <td><button class="opt" onclick="importSave()">Import</button></td>
-                <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ options.offlineProd?"ON":"OFF" }}</button></td>
-            </tr>
-            <tr>
-                <td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
-                <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: {{ options.hqTree?"ON":"OFF" }}</button></td>
-            </tr>
-            <tr>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
-                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">Single-Tab Mode: {{ options.forceOneTab?"ALWAYS":"AUTO" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('hideChallenges')">{{ options.hideChallenges?"隐藏":"显示" }}已经完成的挑战</button></td>
+                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">{{ options.forceOneTab?"总是单标签":"自动" }}</button></td>
 			</tr> 
         </table>`
     },

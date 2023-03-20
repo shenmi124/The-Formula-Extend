@@ -3,7 +3,7 @@
 	height: 100px;
 	min-width: 100px;
 	border: var(--hqProperty1);
-	border-radius: 5%;
+	border-radius: 0%;
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
@@ -32,6 +32,7 @@
 	height: 60px;
 	width: 60px;
 	font-size: 30px;
+	margin: 60px 60px 0px 10px;
 }
 
 .resetNotify {

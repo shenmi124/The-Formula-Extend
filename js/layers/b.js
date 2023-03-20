@@ -56,11 +56,8 @@ addLayer("b", {
         text += "<br>要求指数: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
         return text;
     },
-    row: 0, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "b", description: "B: 重置以获得B能量", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
-    layerShown() { return tmp.goals.unlocks>=2 },
+    row: 0,
+    layerShown() { return tmp.goals.unlocks>=4 },
     tabFormat: [
         "main-display",
         "prestige-button",

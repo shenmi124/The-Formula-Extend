@@ -1,9 +1,9 @@
 let modInfo = {
-	name: "The Formula(公式树)",
-	id: "formula_tree_game",
-	author: "Jacorb90 汉化by QwQe308",
+	name: "公式树NG--",
+	id: "formula_tree_game_NG--",
+	author: "Jacorb90 汉化by QwQe308 NG-- by 辉影神秘(Shinwmyste)",
 	pointsName: "时间",
-	modFiles: ["layers/a.js", "layers/b.js", "layers/c.js", "layers/goals.js", "layers/integration.js", "tree.js"],
+	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/goals.js", "layers/ac.js", "layers/integration.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -11,73 +11,68 @@ let modInfo = {
 	offlineLimit: 1,  // In hours
 }
 
+function colorText(id,id2){
+	return "<span style='color:"+id2+"'>"+id+"</span>"
+}
+
 function displayFormula() {
-	let f = "t"
-	let expData = [player.b.unlocked, player.c.unlocked, hasAchievement("goals", 62)]
-	if (expData.some(x => x)) {
-		f += "<sup>";
-		if (expData[0]) {
-			let extraExp = "1"
-			if (expData[2]) extraExp = "log(a + 1) + 1"
-			f += "(b + "
-			if (expData[1]) f += formatWhole(tmp.c.coefficientInMainFormula)+" × c + "+extraExp+")"
-			else f += extraExp+")"
-		} else if (expData[1]) f += "(2 × c + "+(expData[2]?"log(a + 1) + 1":"1")+")"
-		else f = "(log(a + 1) + 1)"
-		f += "</sup>";
+	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+"t × a, 1"+colorText(') ','#bf8f8f')+colorText(' )','#77bf5f')
+	let m = ''
+	let g3 = ''
+	let f3 = ''
+
+	if(tmp.goals.unlocks>=1){
+		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+"t × a, 1 "+colorText(' )<sup>exp</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
+		m = colorText(' mul','#77bf5f')
+	}
+	if(player.a2.gamma.gte(1)){
+		g3 = colorText('( ','#ffbf00')
+		f3 = colorText(' )<sup>gamma</sup>','#ffbf00')
 	}
 
-	f += " × a";
-	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>201</sub>";
-	if (hasAchievement("goals", 15)) f += " × 成就";
+	f += m
+	g3 += f
+	f = g3
+	f += f3
 	return f;
 }
 
 function displayIntFormula() {
-	let f = "t"
-	let exp = ""
-	let expData = [player.b.unlocked, player.c.unlocked, hasAchievement("goals", 62)]
-	if (expData.some(x => x)) {
-		if (expData[0]) {
-			let extraExp = "IP + 2"
-			if (expData[2]) extraExp = "log(a + 1) + IP + 2"
-			exp += "(b + "
-			if (expData[1]) exp += formatWhole(tmp.c.coefficientInMainFormula)+" × c + "+extraExp+")"
-			else exp += extraExp+")"
-		} else if (expData[1]) exp += "(2 × c + "+(expData[2]?"log(a + 1) + 2":"2")+")"
-		else exp = "(log(a + 1) + 2)"
-	}
-	f += "<sup>"+exp+"</sup>"
+	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+format(player.points.mul(tmp.timeSpeed))+" × "+format(player.a.value)+", "+format(n(1))+colorText(') ','#bf8f8f')+colorText(' )','#77bf5f')
+	let m = ''
+	let g3 = ''
+	let f3 = ''
 
-	f += " × a";
-	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>201</sub>";
-	if (hasAchievement("goals", 15)) f += " × 成就";
-	f += " ÷ (IP - 1)!"
+	if(tmp.goals.unlocks>=1){
+		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+format(player.points.mul(tmp.timeSpeed))+" × "+format(player.a.value)+", "+format(n(1))+colorText(' )<sup>'+format(player.a2.value)+'</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
+		m = colorText(' '+format(player.a2.valueBeta),'#77bf5f')
+	}
+	if(player.a2.gamma.gte(1)){
+		g3 = colorText('( ','#ffbf00')
+		f3 = colorText(' )'+'<sup>'+format(player.a2.valueGamma)+'</sup>','#ffbf00')
+	}
+	
+	f += m
+	g3 += f
+	f = g3
+	f += f3
 	return f;
 }
 
+function n(n){
+	return new Decimal(n)
+}
+
 function calculateValue(t) {
-	if (player.int.unlocked && player.int.value.gt(0)) {
-		let val = t.pow(player.int.value).div(player.int.value.sub(1).factorial())
-
-		let extraExp = hasAchievement("goals", 62)?player.a.value.plus(1).log10().plus(2):new Decimal(2)
-		let exp = (player.b.unlocked?player.b.value.plus(extraExp):extraExp).plus(player.c.unlocked?player.c.value.times(tmp.c.coefficientInMainFormula):0)
-		if (hasAchievement("goals", 62)||player.b.unlocked||player.c.unlocked) t = t.pow((player.b.unlocked||player.c.unlocked)?exp:extraExp).div((player.b.unlocked||player.c.unlocked)?exp:extraExp)
-
-		val = val.times(player.a.value).times(t);
-		if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) val = val.times(gridEffect("b", 201));
-		if (hasAchievement("goals", 15)) val = val.times(tmp.goals.achsCompleted);
-		return val;
-	} else {
-		let extraExp = hasAchievement("goals", 62)?player.a.value.plus(1).log10().plus(1):new Decimal(1)
-		let exp = (player.b.unlocked?player.b.value.plus(extraExp):extraExp).plus(player.c.unlocked?player.c.value.times(tmp.c.coefficientInMainFormula):0)
-		if (hasAchievement("goals", 62)||player.b.unlocked||player.c.unlocked) t = t.pow((player.b.unlocked||player.c.unlocked)?exp:extraExp)
-
-		let val = player.a.value.times(t);
-		if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) val = val.times(gridEffect("b", 201));
-		if (hasAchievement("goals", 15)) val = val.times(tmp.goals.achsCompleted);
-		return val;
+	let f = n(t).mul(player.a.value).max(1).log(10)
+	let powG = n(1)
+	if(player.a2.gamma.gte(1)){
+		powG = n(player.a2.valueGamma)
 	}
+	if(tmp.goals.unlocks>=1){
+		f = n(t).mul(player.a.value).max(1).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
+	}
+	return f.pow(powG)
 }
 
 function updateValue() {
@@ -86,11 +81,17 @@ function updateValue() {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.2",
-	name: "集合",
+	num: "0.2",
+	name: "跳跃即巅峰",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.2 - 跳跃即巅峰</h3><br>
+		- 重新创建基础内容.<br>
+		- 开发了阿尔法能量<br>
+		- 开发了荣耀<br>
+		- 平衡到13<sup>0.7</sup>成就<br>
+	<br><br>
 	<h3>v0.1.2 - 集合</h3><br>
 		- 开发了“集合”<br>
 		- 平衡到47成就<br>
@@ -122,27 +123,26 @@ function canGenPoints(){
 }
 
 function getTimeSpeed() {
-	let spd = new Decimal(1);
-	if (hasAchievement("goals", 36)) spd = spd.times(tmp.goals.goal36eff);
-	if (hasAchievement("goals", 53) && tmp.b.batteriesUnl) spd = spd.times(gridEffect("b", 302))
-	if (tmp.c.clockUnl) spd = spd.times(tmp.c.clockMult);
-	if (hasAchievement("goals", 66)) spd = spd.times(tmp.goals.achsCompleted)
-	else {
-		if (hasAchievement("goals", 62)) spd = spd.times(2);
-		if (hasAchievement("goals", 65)) spd = spd.times(2);
-	}
-	if (hasAchievement("goals", 72)) spd = spd.times(player.int.value.max(1))
+	let spd = n(0.5).mul(tmp.a2.timespeedBoost).max(0).add(player.a.valueA)
+	if(tmp.ac.unlocks>=1){spd = spd.mul(2)}
 	return spd;
 }
 
 function getTimeSpeedFormula() {
-	let f = ""
-	if (hasAchievement("goals", 36)) f = '"绝对是蜜蜂笑话"'
-	if (hasAchievement("goals", 53)) f += " × B<sub>302</sub>"
-	if (tmp.c.clockUnl) f += (f.length>0?" × ":"")+"天数效果"
-	if (hasAchievement("goals", 66)) f += (f.length>0?" × ":"")+"成就"
-	else if (hasAchievement("goals", 62)) f += (f.length>0?" × ":"")+(hasAchievement("goals", 65)?"4":"2")
-	if (hasAchievement("goals", 72)) f += (f.length>0?" × ":"")+"IP"
+	let f = "0.5"
+	let ad = ''
+	let ac = ''
+	let ac2 = ''
+	if(tmp.goals.unlocks>=1){f = colorText('0.5 × Max( ','#bf8f8f')+'timewall, 0'+colorText(' )','#bf8f8f')}
+	if(tmp.goals.unlocks>=2){ad = colorText(' + Avolve','#bf8f8f')}
+	if(tmp.ac.unlocks>=1){
+		ac = colorText('( ','#77bf5f')
+		ac2 = colorText(' ) × 2','#77bf5f')
+	}
+	f += ad
+	ac += f
+	f = ac
+	f += ac2
 	return f;
 }
 
@@ -167,8 +167,8 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
-		if (tmp.timeSpeed.eq(1)) return;
-		else return "时间速率(timespeed) = "+getTimeSpeedFormula();
+		if (tmp.timeSpeed.eq(1)) return '<br><br>n(t) = '+displayIntFormula()+' = '+format(player.value);
+		else return "timespeed = "+getTimeSpeedFormula()+'<br><br>n(t) = '+displayIntFormula()+' = '+format(player.value);
 	}
 ]
 

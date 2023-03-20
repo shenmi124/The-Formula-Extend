@@ -14,7 +14,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
 
-	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+	<script src="js/vue.js"></script>
 	<script src="js/technical/break_eternity.js"></script>
 	<script src="js/technical/layerSupport.js"></script>
 
@@ -35,13 +35,6 @@
 	<script src="js/utils/options.js"></script>
 	<script src="js/utils/save.js"></script>
 	<script src="js/utils/themes.js"></script>
-	
-	  <!-- 汉化文件 汉化者:QwQe308(qq3174905334) -->
-  <script src= "chs.js?07071443"></script>
-  <script src="https://cdn.jsdelivr.net/ gh/g8hh/g8hh.github.io/zh/core.js"></script>
-	
-	
-
 </head>
 
 
@@ -50,7 +43,7 @@
 		<canvas id="treeCanvas" class="canvas" v-if="!(tmp.gameEnded && !player.keepGoing)"></canvas>
 
 		<div v-if="false" id="loadingSection" class="fullWidth">
-			<h1>Loading... (If this takes too long it means there was a serious error!)←</h1>
+			<h1>Loading... (If this takes too long it means there was a serious error!)←<br>正在加载</h1>
 		</div>
 		<div class="vl" v-if="player.navTab !== 'none' && tmp.other.splitScreen && player.tab!='none' && !(tmp.gameEnded && !player.keepGoing)"></div>
 		<div v-if="(tmp.gameEnded && !player.keepGoing)" class="fullWidth">

@@ -2,40 +2,30 @@ addLayer("goals", {
     name: "goals",
     image: "resources/goal.png",
     row: "side",
+    position: 1,
     startData() { return {
         unlocked: true,
         achievements: [],
     }},
-    tooltip() { return formatWhole(tmp[this.layer].achsCompleted)+" Goals completed" },
+    tooltip() { return "您已经完成 "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted))+"<sup>0.7</sup> = "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor())+" 个成就"},
     color: "#cbff3b",
     tabFormat: [
         "blank",
-        ["display-text", function() { return "<h3>您已经完成 <span style='color: "+tmp[this.layer].color+"; font-size: 25px;'>"+formatWhole(tmp[this.layer].achsCompleted)+"</span> 个成就.</h3>" }],
+        ["display-text", function() { return "<h3>您已经完成 <span style='color: "+tmp[this.layer].color+"; font-size: 25px;'>"+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted))+"<sup>0.7</sup> = "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor())+"</span> 个成就</h3><br><small>(真实成就点:<span style='color: "+tmp[this.layer].color+";'>"+format(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7))+"</span>)<small>" }],
         "blank", "buyables", 
         "blank", "blank", "blank",
         "achievements",
     ],
     goal36power() { 
-        let power = new Decimal(hasAchievement("goals", 42)?2:1);
-        if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) power = power.times(gridEffect("b", 203));
-        if (hasAchievement("goals", 54)) power = power.times(3)
-        if (hasAchievement("goals", 71)) power = power.times(3.6)
+        let power = new Decimal(1)
         return power;
     },
     goal36decayrate() {
-        let rate = new Decimal(hasAchievement("goals", 42)?(1/4):1);
-        if (hasAchievement("goals", 54)) rate = rate.times(10)
-        if (hasAchievement("goals", 71)) rate = rate.times(2)
-        return rate.times(tmp.goals.goal36power)
+        let rate = new Decimal(1);
+        return rate
     },
     goal36eff() {
-        let pow = tmp.goals.goal36power
-		let decay = tmp.goals.goal36decayrate
-		let p = player.points.times(decay);
-		if (p.gte(50)) p = p.div(2).plus(25);
-		if (p.gte(65)) p = p.div(2).plus(32.5);
-		if (p.gte(75)) p = p.times(5625).cbrt();
-		return Decimal.sub(pow.times(5), p.max(10).sub(10).div(20)).max(1);
+		return n(1)
     },
     achsCompleted() { return player[this.layer].achievements.length },
     unlocks() { return player[this.layer].buyables[11].toNumber() },
@@ -45,8 +35,16 @@ addLayer("goals", {
         11: {
             unlockData: [
                 {
+                    desc: "解锁α.",
+                    req: 2,
+                },
+                {
                     desc: "解锁进化.",
                     req: 3,
+                },
+                {
+                    desc: "解锁荣耀.",
+                    req: 5,
                 },
                 {
                     desc: "解锁B能量",
@@ -82,8 +80,9 @@ addLayer("goals", {
             },
             canAfford() { 
                 let data = tmp[this.layer].buyables[11].retrieveUnlockData
+                let real = n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7)
                 if (!data) return false;
-                return tmp[this.layer].achsCompleted>=data.req
+                return real>=data.req
             },
             buy() {
                 if (!tmp[this.layer].buyables[11].retrieveUnlockData) return;
@@ -93,100 +92,102 @@ addLayer("goals", {
     },
     achievements: {
         11: {
-            name: "公式有用了!",
+            name: "公式无用了!",
             done() { return player.a.points.gte(1) },
-            tooltip: "获得1个A能量.",
+            tooltip: "获得1个A能量",
             unlocked() { return true },
         },
         12: {
-            name: "虚假的时间墙",
-            done() { return player.value.gte(50) },
-            tooltip: "让 n(t) ≥ 50.",
+            name: "快去解锁下个阶段吧(笑)",
+            done() { return player.value.gte(1) },
+            tooltip: "让 n(t) ≥ 1",
             unlocked() { return hasAchievement(this.layer, 11) }
         },
         13: {
-            name: "再获速度",
-            done() { return player.a.points.gte(10) },
-            tooltip: "达到 10 A能量. 奖励: 让 <span style='font-size: 17.5px;'>a</span> 增加 0.5.",
-            unlocked() { return hasAchievement(this.layer, 11) }
+            name: "?你为什么还不进入下一个阶段",
+            done() { return player.value.gte(1.2) },
+            tooltip: "让 n(t) ≥ 1.2",
+            unlocked() { return hasAchievement(this.layer, 12) }
         },
         14: {
-            name: "更快进化",
-            done() { return tmp.a.bars.Avolve.reqDiv.gt(1) },
-            tooltip: "降低进化要求. 奖励: A能量要求/1.5.",
-            unlocked() { return tmp[this.layer].unlocks>=1 },
+            name: "新能源",
+            done() { return player.a.points.gte(2) },
+            tooltip: "获得第二个A能量",
+            unlocked() { return hasAchievement(this.layer, 11) },
         },
         15: {
             name: "趋向极限值!",
-            done() { return player.a.value.gte(100) },
-            tooltip: "让 a(A) ≥ 100. Reward: 已完成的成就倍增 <span style='font-size: 17.5px;'>n(t)</span>.",
-            unlocked() { return tmp[this.layer].unlocks>=1 },
+            done() { return n(getTimeSpeed()).eq(0) || (player.a2.points.gte(5) && tmp.ac.unlocks>=1) },
+            tooltip(){return tmp.ac.unlocks>=1 ? '获得5阿尔法能量' : "使timespeed为0"},
+            unlocked() { return tmp.goals.unlocks>=1 },
         },
         16: {
             name: "点数在哪?",
-            done() { return tmp.a.bars.Avolve.reqDiv.gte(5) },
-            tooltip: "让进化要求/5. 奖励: 降低进化要求的升级的效果指数+1.",
-            unlocked() { return tmp[this.layer].unlocks>=1 },
+            done() { return (n(tmp.a2.timespeedBoost).lte(0) && player.value.gt(0)) || (n(tmp.a2.timespeedBoost).lte(0.02) && player.value.gt(0) && tmp.ac.unlocks>=1)},
+            tooltip(){
+                return tmp.ac.unlocks>=1 ? 'timewall≤0.02的情况下获得点数' : "timewall≤0的情况下获得点数"
+            },
+            unlocked() { return tmp.goals.unlocks>=1 },
         },
         21: {
-            name: "达到新一代",
-            done() { return player.a.avolve.gte(7) },
-            tooltip: "达到7级进化. 奖励: 您可以购买最大A能量.",
-            unlocked() { return hasAchievement("goals", 14) },
+            name: "达尔文是错误的",
+            done() { return player.a.avolve.gte(2) },
+            tooltip: "达到2级进化",
+            unlocked() { return tmp.goals.unlocks>=2 },
         },
         22: {
-            name: "我感到了力量",
-            done() { return player.a.points.gte(40) },
-            tooltip: "达到 40 A能量. 奖励: A能量要求底数-0.1.",
-            unlocked() { return hasAchievement("goals", 15) }
+            name: "你应该发现了",
+            done() { return player.a2.gamma.gte(1) },
+            tooltip: "获得γ",
+            unlocked() { return player.a2.gamma.gte(1) || hasAchievement(this.layer, 22) }
         },
         23: {
-            name: "百万富翁!",
-            done() { return player.value.gte(1e9) },
-            tooltip: "让 n(t) ≥ 1e9. 奖励: <span style='font-size: 17.5px;'>b</span> 以一个较低的效率加成 <span style='font-size: 17.5px;'>a</span>.",
-            unlocked() { return tmp[this.layer].unlocks>=2 },
+            name: "达尔文又正确了",
+            done() { return player.a.avolve.gte(12) },
+            tooltip: "达到12级进化",
+            unlocked() { return hasAchievement(this.layer, 21) },
         },
         24: {
-            name: "震惊，这个升级没用了!",
-            done() { return tmp.a.bars.Avolve.reqDiv.gte(50) },
-            tooltip: "让进化要求/50. 奖励: 这个升级的效果指数再次+1.",
-            unlocked() { return hasAchievement("goals", 16) },
+            name: "突破极限",
+            done() { return player.a2.points.gte(6) },
+            tooltip: "获得6阿尔法能量",
+            unlocked() { return tmp.goals.unlocks>=2 },
         },
         25: {
-            name: "漂亮.",
-            done() { return player.a.points.gte(69) && player.value.gte(6e9) },
-            tooltip: "达到 69 A能量 & 让 n(t) ≥ 6e9. 奖励: B能量加算到A能量里.",
-            unlocked() { return tmp[this.layer].unlocks>=2 },
+            name: "我赌你获得不了这个.",
+            done() { return tmp.goals.unlocks>=3 && tmp.ac.unlocks>=1 },
+            tooltip: "解锁并到达1荣耀",
+            unlocked() { return tmp.goals.unlocks>=3 },
         },
         26: {
-            name: "达尔文是正确的",
-            done() { return player.a.avolve.gte(20) },
-            tooltip: "达到20级进化. 奖励: A能量不再重置任何东西.",
-            unlocked() { return hasAchievement("goals", 21) },
+            name: "欢迎回来",
+            done() { return tmp.goals.unlocks>=3 && tmp.ac.unlocks>=1 },
+            tooltip: "重新解锁荣耀",
+            unlocked() { return hasAchievement(this.layer, 25) },
         },
         31: {
             name: "穿过我的血管!",
-            done() { return player.b.points.gte(5) },
+            done() { return false },
             tooltip: "达到 5 B能量. 奖励: A能量要求底数-0.1.",
-            unlocked() { return hasAchievement("goals", 22) && hasAchievement("goals", 23) },
+            unlocked() { return false },
         },
         32: {
             name: "更远的存在",
-            done() { return player.a.avolve.gte(30) },
+            done() { return false },
             tooltip: "达到30级进化. 奖励: 进化对 <span style='font-size: 17.5px;'>a</span> 的效果变为其平方.",
-            unlocked() { return hasAchievement("goals", 26) },
+            unlocked() { return false },
         },
         33: {
             name: "更趋向极限值!",
-            done() { return player.a.value.gte(1.5e6) },
+            done() { return false },
             tooltip: "让 a(A) ≥ 1,500,000. 奖励: 已完成的成就加成 <span style='font-size: 17.5px;'>a</span>.",
-            unlocked() { return tmp[this.layer].unlocks>=3 },
+            unlocked() { return false },
         },
         34: {
             name: "亿的六次方? 亿的七次方? 记不清了...",
-            done() { return player.value.gte(1e27) },
+            done() { return false },
             tooltip: "让 n(t) ≥ 1e27. 奖励: 解锁一些新的电池，你可以同时使用两个电池.",
-            unlocked() { return hasAchievement("goals", 31)&&tmp[this.layer].unlocks>=3 },
+            unlocked() { return false },
         },
         35: {
             name: "我强大么?",
@@ -196,95 +197,95 @@ addLayer("goals", {
         },
         36: {
             name: "绝对是蜜蜂笑话",
-            done() { return player.b.points.gte(10) },
+            done() { return false },
             tooltip() { 
                 return "达到 10 B能量. 奖励: 时间快 "+format(tmp.goals.goal36power.times(5))+"x , 但在大于 "+format(Decimal.div(10, tmp.goals.goal36decayrate))+" 秒时变慢.<br>当前: "+format(tmp.goals.goal36eff)+"x" 
             },
-            unlocked() { return hasAchievement("goals", 31) },
+            unlocked() { return false },
         },
         41: {
             name: "次无限之和",
-            done() { return player.value.gte(1e40) && player.a.value.gte(6.98e8) },
+            done() { return false },
             tooltip: "让 n(t) ≥ 1e40 & a(A) ≥ 698,000,000. 奖励: A能量底数-0.05.",
-            unlocked() { return hasAchievement("goals", 34) }
+            unlocked() { return false }
         },
         42: {
             name: "参考那个蜜蜂电影",
-            done() { return player.b.points.gte(15) },
+            done() { return false },
             tooltip: '达到 15 B能量. 奖励: "绝对是蜜蜂笑话" 的效果x2 & 效果减弱速率/4.',
-            unlocked() { return hasAchievement("goals", 36) },
+            unlocked() { return false },
         },
         43: {
             name: "未充能",
-            done() { return player.value.gte(1e75) && tmp.b.usedBatteries==0 },
+            done() { return false },
             tooltip: "在不使用任何电池的情况下让 n(t) ≥ 1e75. 奖励: 你可以额外激活一个电池.",
-            unlocked() { return hasAchievement("goals", 35) && hasAchievement("goals", 36) && tmp[this.layer].unlocks>=3 },
+            unlocked() { return false },
         },
         44: {
             name: "我感觉像是在赌博",
-            done() { return player.a.points.gte(888) },
+            done() { return false },
             tooltip: "达到 888 A能量. 奖励: B能量对A能量效果的加成改完乘以而不是相加.",
-            unlocked() { return hasAchievement("goals", 41) },
+            unlocked() { return false },
         },
         45: {
             name: "如果大数只是一个游戏内容...",
-            done() { return player.value.gte(1e100) },
+            done() { return false },
             tooltip: "让 n(t) ≥ 1e100. 奖励: 第二行电池有自己独特的效果.",
-            unlocked() { return hasAchievement("goals", 43) },
+            unlocked() { return false },
         },
         46: {
             name: "啊我明白了",
-            done() { return player.c.points.gte(4) },
+            done() { return false },
             tooltip: "达到 4 C能量. 奖励: 三倍化 <span style='font-size: 17.5px;'>c</span> 在 n(t) 里的效果.",
-            unlocked() { return hasAchievement("goals", 44) && tmp[this.layer].unlocks>=4 },
+            unlocked() { return false },
         },
         51: {
             name: "这仍然没有哪怕半点作用",
-            done() { return tmp.a.bars.Avolve.reqDiv.gte(3e5) },
+            done() { return false },
             tooltip: "让进化要求/300,000. 奖励: 该升级的效果指数加上已完成的成就数.",
-            unlocked() { return hasAchievement("goals", 24) && hasAchievement("goals", 36) },
+            unlocked() { return false },
         },
         52: {
             name: "哇那是成吨的伤害!",
-            done() { return player.a.points.gte(2e3) },
+            done() { return false },
             tooltip: "达到 2,000 A能量. 奖励: 你可以自动获取 A能量, 同时它的获取底数-0.05.",
-            unlocked() { return hasAchievement("goals", 44) }
+            unlocked() { return false }
         },
         53: {
             name: "20%的宽恕(注:要求是1.80e308^(1-20%))",
-            done() { return player.value.gte(Math.pow(Number.MAX_VALUE, 0.8)) },
+            done() { return false },
             tooltip() { return "让 n(t) ≥ "+format(Math.pow(Number.MAX_VALUE, 0.8))+". 奖励: 你可以额外开启一个电池, 同时第三排电池也有自己独特的效果了." },
-            unlocked() { return hasAchievement("goals", 45) },
+            unlocked() { return false },
         },
         54: {
             name: "疯狂-B",
-            done() { return player.a.value.gte(1.5e17) },
+            done() { return false },
             tooltip: '让 a(A) ≥ 1.5e17. 奖励: 进化的折算延迟25级, 同时 "绝对是蜜蜂笑话" 的效果x3,削减速度/10.',
-            unlocked() { return hasAchievement("goals", 42) && hasAchievement("goals", 51) },
+            unlocked() { return false },
         },
         55: {
             name: "巴斯光年是一个远见者",
-            done() { return player.value.gte(Number.MAX_VALUE) },
+            done() { return false },
             tooltip: "让 n(t) ≥ "+format(Number.MAX_VALUE)+".",
-            unlocked() { return hasAchievement("goals", 53) },
+            unlocked() { return false },
         },
         56: {
             name: "真正的一日",
-            done() { return tmp.c.clockRatio.times(tmp.c.hoursPerDay).gte(24) },
+            done() { return false },
             tooltip: "让钟表显示24:00:00及以上. 奖励: 一天的长度/2.",
-            unlocked() { return hasAchievement("goals", 54) && tmp.goals.unlocks>=5}
+            unlocked() { return false }
         },
         61: {
             name: "断货了?",
-            done() { return player.b.points.gte(30) && player.c.points.gte(7) },
+            done() { return false },
             tooltip: '达到 30 B能量 & 7 C能量. 奖励: 每个钟中的一天会使其自身效果+0.1 (不随时间削减).',
-            unlocked() { return hasAchievement("goals", 52) && tmp.goals.unlocks>=5}
+            unlocked() { return false }
         },
         62: {
             name: "回来拿这个成就了?",
-            done() { return player.a.avolve.gte(308) },
+            done() { return false },
             tooltip: "达到进化等级 308. 奖励: 时间速率x2, 同时 <span style='font-size: 17.5px;'>a</span> 的对数加算到 n(t) 中的 <span style='font-size: 17.5px;'>t</span> 的指数里.",
-            unlocked() { return hasAchievement("goals", 61) },
+            unlocked() { return false },
         },
         63: {
             name: "太阳系钟摆",
@@ -300,7 +301,7 @@ addLayer("goals", {
         },
         65: {
             name: "我猜那个不再是没用的了...",
-            done() { return tmp.a.bars.Avolve.reqDiv.gte(1e55) },
+            done() { return false },
             tooltip: "让进化的需求/1e55. 奖励: 这个升级的等级加算到这个升级的指数中, A能量以更强的公式加成a(A), 双倍化时间速率.",
             unlocked() { return hasAchievement("goals", 56) && hasAchievement("goals", 62) },
         },
@@ -324,7 +325,7 @@ addLayer("goals", {
         },
         73: {
             name: "没有半点用的QoL.",
-            done() { return tmp.a.bars.Avolve.reqDiv.gte(1e100) },
+            done() { return false },
             tooltip: "让进化的要求/1e100. 奖励: 降低进化要求的升级可以被自动并批量购买. 同时, 它的效果指数被IP加成.",
             unlocked() { return hasAchievement("goals", 65) && player.int.unlocked },
         },
