@@ -51,6 +51,10 @@ addLayer("goals", {
                     req: 7,
                 },
                 {
+                    desc: "解锁轮盘",
+                    req: 8,
+                },
+                {
                     desc: "解锁电池",
                     req: 12,
                 },
@@ -184,24 +188,24 @@ addLayer("goals", {
             unlocked() { return tmp.ac.unlocks>=2 },
         },
         34: {
-            name: "亿的六次方? 亿的七次方? 记不清了...",
-            done() { return false },
-            tooltip: "让 n(t) ≥ 1e27. 奖励: 解锁一些新的电池，你可以同时使用两个电池.",
-            unlocked() { return false },
+            name: "绝对是蜜蜂笑话",
+            done() { return player.b.points.gte(1) },
+            tooltip: "达到 1 B能量.",
+            unlocked() { return tmp.goals.unlocks>=4 },
         },
         35: {
             name: "我强大么?",
-            done() { return false },
-            tooltip: "达到 300 A能量. 奖励: B能量的底数/2.",
-            unlocked() { return false }
+            done() { return player.value.gte(333333) },
+            tooltip: "让 n(t) ≥ 333,333",
+            unlocked() { return tmp.goals.unlocks>=4 }
         },
         36: {
-            name: "绝对是蜜蜂笑话",
-            done() { return false },
+            name: "参考那个蜜蜂电影",
+            done() { return player.b.points.gte(2) },
             tooltip() { 
-                return "达到 10 B能量. 奖励: 时间快 "+format(tmp.goals.goal36power.times(5))+"x , 但在大于 "+format(Decimal.div(10, tmp.goals.goal36decayrate))+" 秒时变慢.<br>当前: "+format(tmp.goals.goal36eff)+"x" 
+                return "达到 2 B能量."
             },
-            unlocked() { return false },
+            unlocked() { return tmp.goals.unlocks>=4 },
         },
         41: {
             name: "次无限之和",

@@ -57,7 +57,7 @@ addLayer("a", {
 		if (layers[resettingLayer].row > layers[this.layer].row) {
 			let keep = []
 			if (resettingLayer=="a2" && tmp.ac.unlocks>=1) keep.push("buyables",'avolve');
-			if (resettingLayer=="a2" && tmp.ac.unlocks>=2) keep.push("points");
+			if (resettingLayer=="a2" && tmp.ac.unlocks>=3) keep.push("points");
 			layerDataReset(this.layer, keep)
 		}
 		player.a.fire = new Decimal(100)

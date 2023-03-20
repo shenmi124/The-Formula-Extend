@@ -13,24 +13,23 @@ addLayer("b", {
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
-    requires() { return new Decimal(114514) },
+    requires() { return new Decimal(11000) },
     reqDiv() { 
         let div = new Decimal(1);
         if (tmp[this.layer].batteriesUnl) div = div.times(gridEffect(this.layer, 101));
         return div;
     },
     base() {
-        let base = new Decimal(200);
-        if (hasAchievement("goals", 35)) base = base.div(2);
+        let base = new Decimal(115);
         return base;
     },
     exponent() {
-        let exp = 1.25
+        let exp = 1.15
         return new Decimal(exp);
     },
     costScalingStart: new Decimal(15),
-    costScalingInc() { return new Decimal(hasAchievement("goals", 74)?.04:.05) },
-    canBuyMax() { return hasAchievement("goals", 74) },
+    costScalingInc() { return new Decimal(0.05) },
+    canBuyMax() { return false },
     autoPrestige() { return false },
     resetsNothing() { return false },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
@@ -70,24 +69,17 @@ addLayer("b", {
         "grid",
     ],
     displayFormula() {
-        let brackets = hasAchievement("goals", 83)
-        let f = (brackets?"(":"")+"B";
-        if (hasAchievement("goals", 64)) f += " + c"
-        if (hasAchievement("goals", 81)) f += " + IP"
-        if (brackets) f += ") × I"
+        let f = "B - 0.5";
         return f;
     },
     calculateValue(B=player[this.layer].points) {
-        let val = B;
-        if (hasAchievement("goals", 64)) val = val.plus(player.c.value);
-        if (hasAchievement("goals", 81)) val = val.plus(player.int.value);
-        if (hasAchievement("goals", 83)) val = val.times(player.int.points.max(1));
+        let val = B.sub(0.5);
         return val;
     },
     update(diff) {
         player[this.layer].value = tmp[this.layer].calculateValue
     },
-    batteriesUnl() { return tmp.goals.unlocks>=3 },
+    batteriesUnl() { return false },
     batteryEffectTypes: {
         101: "降低A能量和B能量的价格",
         102: "基于A能量倍增B能量效果",
@@ -116,8 +108,8 @@ addLayer("b", {
         return rows;
     },
     grid: {
-        rows() { return tmp[this.layer].batteriesUnl?(hasAchievement("goals", 34)?3:2):0 },
-        cols() { return tmp[this.layer].batteriesUnl?(hasAchievement("goals", 34)?3:2):0 },
+        rows() { return 0 },
+        cols() { return 0 },
         maxRows: 3,
         maxCols: 3,
 

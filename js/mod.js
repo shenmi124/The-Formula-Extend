@@ -3,7 +3,7 @@ let modInfo = {
 	id: "formula_tree_game_NG--",
 	author: "Jacorb90 汉化by QwQe308 NG-- by 辉影神秘(Shinwmyste)",
 	pointsName: "时间",
-	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/goals.js", "layers/ac.js", "layers/integration.js", "tree.js"],
+	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/ro.js", "layers/goals.js", "layers/ac.js", "layers/integration.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -16,13 +16,22 @@ function colorText(id,id2){
 }
 
 function displayFormula() {
-	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+"t × a, 1"+colorText(') ','#bf8f8f')+colorText(' )','#77bf5f')
+	let b = 't'
+	let b2 = '1'
+
+	if(player.b.points.gte(1)){
+		b = 't<sup>'+colorText('log<sub>3</sub>( ','#bf8f8f')+'b + 1 '+colorText( ') + 1','#bf8f8f')+'</sup>'
+		b2 = 'b × 200'
+	}
+
+	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × a, "+b2+colorText(' ) ','#bf8f8f')+colorText(' )','#77bf5f')
 	let m = ''
 	let g3 = ''
 	let f3 = ''
 
+
 	if(tmp.goals.unlocks>=1){
-		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+"t × a, 1 "+colorText(' )<sup>exp</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
+		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × a, "+b2+colorText(' )<sup>exp</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
 		m = colorText(' mul','#77bf5f')
 	}
 	if(player.a2.gamma.gte(1)){
@@ -38,13 +47,21 @@ function displayFormula() {
 }
 
 function displayIntFormula() {
-	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+format(player.points.mul(tmp.timeSpeed))+" × "+format(player.a.value)+", "+format(n(1))+colorText(') ','#bf8f8f')+colorText(' )','#77bf5f')
+	let b = format(player.points.mul(tmp.timeSpeed))
+	let b2 = format(n(1))
+
+	if(player.b.points.gte(1)){
+		b = format(player.points.mul(tmp.timeSpeed))+'<sup>'+colorText('log<sub>'+format(n(3))+'</sub>( ', '#bf8f8f')+format(player.b.value)+' + '+format(n(1))+colorText(' ) + '+format(n(1)),'#bf8f8f')+'</sup>'
+		b2 = format(player.b.value.mul(200))
+	}
+
+	let f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × "+format(player.a.value)+", "+format(b2)+colorText(') ','#bf8f8f')+colorText(' )','#77bf5f')
 	let m = ''
 	let g3 = ''
 	let f3 = ''
 
 	if(tmp.goals.unlocks>=1){
-		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+format(player.points.mul(tmp.timeSpeed))+" × "+format(player.a.value)+", "+format(n(1))+colorText(' )<sup>'+format(player.a2.value)+'</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
+		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × "+format(player.a.value)+", "+format(b2)+colorText(' )<sup>'+format(player.a2.value)+'</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
 		m = colorText(' '+format(player.a2.valueBeta),'#77bf5f')
 	}
 	if(player.a2.gamma.gte(1)){
@@ -64,13 +81,14 @@ function n(n){
 }
 
 function calculateValue(t) {
-	let f = n(t).mul(player.a.value).max(1).log(10)
+	let b = player.b.points.gte(1) ? player.b.value.mul(200) : n(1)
+	let f = n(n(t).pow(player.b.value.add(1).log(3).add(1))).mul(player.a.value).max(b).log(10)
 	let powG = n(1)
 	if(player.a2.gamma.gte(1)){
 		powG = n(player.a2.valueGamma)
 	}
 	if(tmp.goals.unlocks>=1){
-		f = n(t).mul(player.a.value).max(1).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
+		f = n(n(t).pow(player.b.value.add(1).log(3).add(1))).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
 	}
 	return f.pow(powG)
 }
@@ -81,13 +99,18 @@ function updateValue() {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "跳跃即巅峰",
+	num: "0.21",
+	name: "远离赌博!",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.21 - 远离赌博!</h3><br>
+		- 重新创建基础内容<br>
+		- 开发了转盘<br>
+		- 平衡到20<sup>0.7</sup>成就<br>
+	<br><br>
 	<h3>v0.2 - 跳跃即巅峰</h3><br>
-		- 重新创建基础内容.<br>
+		- 重新创建基础内容<br>
 		- 开发了阿尔法能量<br>
 		- 开发了荣耀<br>
 		- 平衡到17<sup>0.7</sup>成就<br>
@@ -101,7 +124,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- 平衡到36成就<br>
 	<br><br>
 	<h3>v0.1 - 学习字母</h3><br>
-		- 创建基础内容.<br>
+		- 创建基础内容<br>
 		- 开发了A能量 & 进化<br>
 		- 开发了成就<br>
 		- 开发了B能量和电池<br>
@@ -174,7 +197,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return tmp.goals.unlocks>=4
+	return tmp.goals.unlocks>=5
 }
 
 

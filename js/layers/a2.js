@@ -46,7 +46,7 @@ addLayer("a2", {
     displayFormula() {
         let f = "α - β + 1";
 
-        let f2 = colorText('( ','#bf8f8f')+' β + 1 '+colorText(' )<sup>( α / 20 + 0.7 )</sup','#bf8f8f')
+        let f2 = colorText('( ','#bf8f8f')+' β + 1 '+colorText(' )<sup>α / 20 + 0.7</sup','#bf8f8f')
 
         let f3 = '1 - α × 0.24'
         if(tmp.ac.unlocks>=1){f3 = colorText('Max( ','#bf8f8f')+'1 - α × 0.24, 0.02'+colorText(' ) ','#bf8f8f')}
