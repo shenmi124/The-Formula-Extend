@@ -43,18 +43,15 @@ addLayer("a2", {
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return tmp.goals.unlocks>=1},
-    doReset(resettingLayer) {
-        player.points = player.points.mul(0.5)
-    },
     displayFormula() {
         let f = "α - β + 1";
 
-        let f2 = '(β + 1)<sup>(α / 20 + 0.7)</sup>'
+        let f2 = colorText('( ','#bf8f8f')+' β + 1 '+colorText(' )<sup>( α / 20 + 0.7 )</sup','#bf8f8f')
 
         let f3 = '1 - α × 0.24'
-        if(tmp.ac.unlocks>=1){f3 = 'Max(1 - α × 0.24, 0.02)'}
+        if(tmp.ac.unlocks>=1){f3 = colorText('Max( ','#bf8f8f')+'1 - α × 0.24, 0.02'+colorText(' ) ','#bf8f8f')}
 
-        let fg = 'γ × 0.2 × '+colorText('(','#77bf5f')+' Max(γ, 1) / (2 + γ) '+colorText(') + 1','#77bf5f')
+        let fg = colorText('γ × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ, 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1','#77bf5f')
         
         return [f, f2, f3, fg];
     },

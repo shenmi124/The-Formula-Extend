@@ -29,6 +29,10 @@ addLayer("ac", {
                     desc: "获得特权阶级1",
                     req: 1,
                 },
+                {
+                    desc: "获得特权阶级2",
+                    req: 2,
+                },
             ],
             retrieveUnlockData() { return tmp[this.layer].buyables[11].unlockData[player[this.layer].buyables[11].toNumber()] },
             title() {
@@ -67,6 +71,14 @@ addLayer("ac", {
 			},
             unlocked(){return tmp.ac.unlocks>=1}
 		},
+		2: {
+			requirementDescription: "特权阶级2",
+			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量<br><br>a效果公式A指数+0.04<br><br>A能量不再重置任何<br>阿尔法能量不再重置A能量<br>>————————————————————————————————————————————————————————————————————————<",
+			done() {
+				return tmp.ac.unlocks>=2
+			},
+            unlocked(){return tmp.ac.unlocks>=2}
+		},
     },
     achievements: {
         11: {
@@ -74,6 +86,12 @@ addLayer("ac", {
             done() { return tmp.goals.unlocks>=3 },
             tooltip: "解锁荣耀.",
             unlocked() { return true },
+        },
+        12: {
+            name: "6",
+            done() { return n(tmp.goals.achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor().gte(6) },
+            tooltip: "获得6个成就",
+            unlocked() { return tmp.ac.unlocks>=1 },
         },
     },
     nodeStyle: { width: "50px", height: "50px", "min-width": "50px" },

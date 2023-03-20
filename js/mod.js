@@ -90,7 +90,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- 重新创建基础内容.<br>
 		- 开发了阿尔法能量<br>
 		- 开发了荣耀<br>
-		- 平衡到13<sup>0.7</sup>成就<br>
+		- 平衡到17<sup>0.7</sup>成就<br>
 	<br><br>
 	<h3>v0.1.2 - 集合</h3><br>
 		- 开发了“集合”<br>
@@ -174,7 +174,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return false
+	return tmp.goals.unlocks>=4
 }
 
 

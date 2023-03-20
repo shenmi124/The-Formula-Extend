@@ -62,7 +62,7 @@ addLayer("c", {
     hotkeys: [
         {key: "c", description: "C: 重置以获得C能量", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown() { return tmp.goals.unlocks>=4 },
+    layerShown() { return tmp.goals.unlocks>=7 },
     tabFormat: [
         "main-display",
         "prestige-button",

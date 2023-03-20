@@ -31,7 +31,7 @@ addLayer("a", {
         return base;
     },
     canBuyMax() { return false },
-    resetsNothing() { return false },
+    resetsNothing() { return tmp.ac.unlocks>=2 },
     autoPrestige() { return player.a.auto && hasMilestone("a", 0) },
     tooltipLocked() { return "" },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
@@ -57,18 +57,21 @@ addLayer("a", {
 		if (layers[resettingLayer].row > layers[this.layer].row) {
 			let keep = []
 			if (resettingLayer=="a2" && tmp.ac.unlocks>=1) keep.push("buyables",'avolve');
+			if (resettingLayer=="a2" && tmp.ac.unlocks>=2) keep.push("points");
 			layerDataReset(this.layer, keep)
 		}
 		player.a.fire = new Decimal(100)
 	},
     displayFormula() {
         let f = "A<sup>0.85<sup>";
+        if(tmp.ac.unlocks>=2){f = "A<sup>0.89<sup>"}
 
         let f2 = '进化等级 × 0.005'
         return [f,f2];
     }, 
     calculateValue(A=player[this.layer].points) {
         let val = A.pow(0.85);
+        if(tmp.ac.unlocks>=2){val = A.pow(0.89);}
         return val;
     },
     calculateValueA(A=player[this.layer].avolve) {
@@ -91,7 +94,8 @@ addLayer("a", {
             width: 400,
             height: 20,
             req(){
-                return player.a.avolve.mul(4).pow(1.7).div(tmp.a.buyables[11].effect).floor()
+                let pow2 = player.a.avolve.gte(500) ? player.a.avolve.sub(500).div(10000).add(1) : n(1)
+                return player.a.avolve.mul(4).pow(1.7).pow(pow2).div(tmp.a.buyables[11].effect).floor()
             },
             progress() {
                 if(player.a.avolve.eq(0)){return n(1)}

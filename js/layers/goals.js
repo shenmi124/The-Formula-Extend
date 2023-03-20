@@ -166,22 +166,22 @@ addLayer("goals", {
             unlocked() { return hasAchievement(this.layer, 25) },
         },
         31: {
-            name: "穿过我的血管!",
-            done() { return false },
-            tooltip: "达到 5 B能量. 奖励: A能量要求底数-0.1.",
-            unlocked() { return false },
+            name: "再获加速",
+            done() { return player.a.points.gte(10) },
+            tooltip: "达到 10 A能量.",
+            unlocked() { return tmp.goals.unlocks>=2 },
         },
         32: {
             name: "更远的存在",
-            done() { return false },
-            tooltip: "达到30级进化. 奖励: 进化对 <span style='font-size: 17.5px;'>a</span> 的效果变为其平方.",
-            unlocked() { return false },
+            done() { return player.a.avolve.gte(30) },
+            tooltip: "达到30级进化.",
+            unlocked() { return tmp.goals.unlocks>=2 },
         },
         33: {
             name: "更趋向极限值!",
-            done() { return false },
-            tooltip: "让 a(A) ≥ 1,500,000. 奖励: 已完成的成就加成 <span style='font-size: 17.5px;'>a</span>.",
-            unlocked() { return false },
+            done() { return player.value.gte(10000) },
+            tooltip: "让 n(t) ≥ 10,000.",
+            unlocked() { return tmp.ac.unlocks>=2 },
         },
         34: {
             name: "亿的六次方? 亿的七次方? 记不清了...",
@@ -191,9 +191,9 @@ addLayer("goals", {
         },
         35: {
             name: "我强大么?",
-            done() { return player.a.points.gte(300) },
+            done() { return false },
             tooltip: "达到 300 A能量. 奖励: B能量的底数/2.",
-            unlocked() { return hasAchievement("goals", 31) }
+            unlocked() { return false }
         },
         36: {
             name: "绝对是蜜蜂笑话",

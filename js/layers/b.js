@@ -13,7 +13,7 @@ addLayer("b", {
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
-    requires() { return new Decimal(5e4) },
+    requires() { return new Decimal(114514) },
     reqDiv() { 
         let div = new Decimal(1);
         if (tmp[this.layer].batteriesUnl) div = div.times(gridEffect(this.layer, 101));
@@ -56,7 +56,7 @@ addLayer("b", {
         text += "<br>要求指数: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
         return text;
     },
-    row: 0,
+    row: 2,
     layerShown() { return tmp.goals.unlocks>=4 },
     tabFormat: [
         "main-display",
@@ -168,5 +168,6 @@ addLayer("b", {
     doReset(resettingLayer) {
         let keep = ["grid"]
         if (layers[resettingLayer].row > tmp[this.layer].row) layerDataReset(this.layer, keep)
-    }
+    },
+    branches: ["a2"],
 })
