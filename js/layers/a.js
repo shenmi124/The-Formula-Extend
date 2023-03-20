@@ -31,7 +31,7 @@ addLayer("a", {
         return base;
     },
     canBuyMax() { return false },
-    resetsNothing() { return hasAchievement("goals", 26) },
+    resetsNothing() { return false },
     autoPrestige() { return player.a.auto && hasMilestone("a", 0) },
     tooltipLocked() { return "" },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
