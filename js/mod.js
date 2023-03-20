@@ -82,13 +82,13 @@ function n(n){
 
 function calculateValue(t) {
 	let b = player.b.points.gte(1) ? player.b.value.mul(200) : n(1)
-	let f = n(n(t).pow(player.b.value.add(1).log(3).add(1))).mul(player.a.value).max(b).log(10)
+	let f = n(n(t).pow(player.b.value.add(1).log(3).add(1).max(1))).mul(player.a.value).max(b).log(10)
 	let powG = n(1)
 	if(player.a2.gamma.gte(1)){
 		powG = n(player.a2.valueGamma)
 	}
 	if(tmp.goals.unlocks>=1){
-		f = n(n(t).pow(player.b.value.add(1).log(3).add(1))).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
+		f = n(n(t).pow(player.b.value.add(1).log(3).add(1).max(1))).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
 	}
 	return f.pow(powG)
 }
