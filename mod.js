@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "公式树NG--",
+	name: "The Formula NG--",
 	id: "formula_tree_game_NG--",
-	author: "Jacorb90 汉化by QwQe308 NG-- by 辉影神秘(Shinwmyste)",
-	pointsName: "时间",
+	author: "Jacorb90 / NG-- by 辉影神秘(Shinwmyste)",
+	pointsName: "time",
 	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/ro.js", "layers/goals.js", "layers/ac.js", "layers/integration.js", "tree.js"],
 
 	discordName: "",
@@ -82,15 +82,14 @@ function n(n){
 
 function calculateValue(t) {
 	let b = player.b.points.gte(1) ? player.b.value.mul(200) : n(1)
-	let b2 = player.b.points.gte(1) ? n(t).pow(player.b.value.add(1).log(3).add(1)) : n(t)
-	b = b.max(1)
-	let f = n(b2).mul(player.a.value).max(b).log(10)
+    b = b.max(1)
+	let f = n(n(t).pow(player.b.value.add(1).log(3).add(1).max(1))).mul(player.a.value).max(b).log(10)
 	let powG = n(1)
 	if(player.a2.gamma.gte(1)){
 		powG = n(player.a2.valueGamma)
 	}
 	if(tmp.goals.unlocks>=1){
-		f = n(b2).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
+		f = n(n(t).pow(player.b.value.add(1).log(3).add(1).max(1))).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
 	}
 	return f.pow(powG)
 }
@@ -102,37 +101,37 @@ function updateValue() {
 // Set your version in num and name
 let VERSION = {
 	num: "0.21",
-	name: "远离赌博!",
+	name: "No Gambling Please!",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
-	<h3>v0.21 - 远离赌博!</h3><br>
-		- 重新创建基础内容<br>
-		- 开发了转盘<br>
-		- 平衡到20<sup>0.7</sup>成就<br>
+	<h3>v0.21 - No Gambling Please!</h3><br>
+		- Redeveloped basic contents.<br>
+		- Implemented "Wheel".<br>
+		- Balanced up to 20<sup>0.7</sup> Goals completed.<br>
 	<br><br>
-	<h3>v0.2 - 跳跃即巅峰</h3><br>
-		- 重新创建基础内容<br>
-		- 开发了阿尔法能量<br>
-		- 开发了荣耀<br>
-		- 平衡到17<sup>0.7</sup>成就<br>
+	<h3>v0.2 - Skipping is The Peak</h3><br>
+		- Redeveloped basic contents.<br>
+		- Implemented "Alpha Energy".<br>
+		- Implemented "Glory".<br>
+		- Balanced up to 17<sup>0.7</sup> Goals completed.<br>
 	<br><br>
-	<h3>v0.1.2 - 集合</h3><br>
-		- 开发了“集合”<br>
-		- 平衡到47成就<br>
+	<h3>v0.1.2 - Integrate and Weep</h3><br>
+		- Implemented Integration<br>
+		- Balanced up to 47 Goals completed<br>
 	<br><br>
-	<h3>v0.1.1 - 更多字母, 更有趣的游戏</h3><br>
-		- 开发了C能量 & 钟<br>
-		- 平衡到36成就<br>
+	<h3>v0.1.1 - More Letters, More Fun</h3><br>
+		- Implemented C-Power & The Clock<br>
+		- Balanced up to 36 Goals completed<br>
 	<br><br>
-	<h3>v0.1 - 学习字母</h3><br>
-		- 创建基础内容<br>
-		- 开发了A能量 & 进化<br>
-		- 开发了成就<br>
-		- 开发了B能量和电池<br>
-		- 平衡到19成就<br>`
+	<h3>v0.1 - Learning Our Letters</h3><br>
+		- Set up basic stuff.<br>
+		- Implemented A-Power & Avolve<br>
+		- Implemented Goals<br>
+		- Implemented B-Power & Batteries<br>
+		- Balanced up to 19 Goals completed<br>`
 
-let winText = `恭喜! 你完成了这个游戏, 但是现在...`
+let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
