@@ -33,6 +33,10 @@ addLayer("ac", {
                     desc: "获得特权阶级2",
                     req: 2,
                 },
+                {
+                    desc: "获得特权阶级3",
+                    req: 3,
+                },
             ],
             retrieveUnlockData() { return tmp[this.layer].buyables[11].unlockData[player[this.layer].buyables[11].toNumber()] },
             title() {
@@ -53,7 +57,9 @@ addLayer("ac", {
             },
             buy() {
                 layerDataReset('goals')
+                layerDataReset('b')
                 layerDataReset('a2')
+                layerDataReset('ro')
                 layerDataReset('a')
                 player.points = n(0)
 
@@ -73,18 +79,26 @@ addLayer("ac", {
 		},
 		2: {
 			requirementDescription: "特权阶级2",
-			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量<br><br>a效果公式A指数+0.04<br><br>A能量不再重置任何<br>>————————————————————————————————————————————————————————————————————————<",
+			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量<br><br>a效果公式A指数+0.04<br><br>A能量不再重置任何<br>你可以最大购买阿尔法能量<br>>————————————————————————————————————————————————————————————————————————<",
 			done() {
 				return tmp.ac.unlocks>=2
 			},
             unlocked(){return tmp.ac.unlocks>=2}
 		},
+		3: {
+			requirementDescription: "特权阶级3",
+			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量,B能量,转盘<br><br>转盘升级<br><br>你可以自动购买A能量<br>一次可以获得5级的进化<br>阿尔法能量不再消耗/重置A能量<br>>————————————————————————————————————————————————————————————————————————<",
+			done() {
+				return tmp.ac.unlocks>=3
+			},
+            unlocked(){return tmp.ac.unlocks>=3}
+		},
     },
     achievements: {
         11: {
-            name: "免费!",
-            done() { return tmp.goals.unlocks>=3 },
-            tooltip: "解锁荣耀.",
+            name: "5",
+            done() { return n(tmp.goals.achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor().gte(5) },
+            tooltip: "获得5个成就",
             unlocked() { return true },
         },
         12: {
@@ -92,6 +106,12 @@ addLayer("ac", {
             done() { return n(tmp.goals.achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor().gte(6) },
             tooltip: "获得6个成就",
             unlocked() { return tmp.ac.unlocks>=1 },
+        },
+        13: {
+            name: "10",
+            done() { return n(tmp.goals.achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor().gte(10) },
+            tooltip: "获得10个成就",
+            unlocked() { return tmp.ac.unlocks>=2 },
         },
     },
     nodeStyle: { width: "50px", height: "50px", "min-width": "50px" },

@@ -30,10 +30,12 @@ addLayer("a2", {
     getResetGain() {
         let amt = 0
         if(player.a.value.gte(player.a2.points.add(1))){amt = 1}
+        if(tmp.ac.unlocks>=2){amt = player.a.value.sub(player.a2.points).max(0).floor()}
 
         return new Decimal(amt)
     },
     getNextAt() {
+        if(tmp.ac.unlocks>=2){return player.a.value.sub(player.a2.points).max(0).floor().add(player.a2.points).add(1)}
         return player.a2.points.add(1)
     },
     prestigeButtonText() {

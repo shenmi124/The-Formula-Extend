@@ -32,7 +32,7 @@ addLayer("a", {
     },
     canBuyMax() { return false },
     resetsNothing() { return tmp.ac.unlocks>=2 },
-    autoPrestige() { return player.a.auto && hasMilestone("a", 0) },
+    autoPrestige() { return tmp.ac.unlocks>=3 },
     tooltipLocked() { return "" },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
@@ -64,14 +64,17 @@ addLayer("a", {
 	},
     displayFormula() {
         let f = "A<sup>0.85<sup>";
-        if(tmp.ac.unlocks>=2){f = "A<sup>0.89<sup>"}
+        let po = ''
+        if(tmp.ac.unlocks>=2){f = "A<sup>0.89</sup>"}
+        if(player.ro.b.gt(0)){po = "<sup> + RB</sup>"}
+        f += po
 
         let f2 = '进化等级 × 0.005'
         return [f,f2];
     }, 
     calculateValue(A=player[this.layer].points) {
         let val = A.pow(0.85);
-        if(tmp.ac.unlocks>=2){val = A.pow(0.89);}
+        if(tmp.ac.unlocks>=2){val = A.pow(n(0.89).add(player.ro.valueB));}
         return val;
     },
     calculateValueA(A=player[this.layer].avolve) {
@@ -84,6 +87,9 @@ addLayer("a", {
 
         if (tmp.goals.unlocks>=2) {
             if(tmp[this.layer].bars.Avolve.progress>=1){
+                if(tmp.ac.unlocks>=3){
+                    player[this.layer].avolve = player[this.layer].avolve.plus(4);
+                }
                 player[this.layer].avolve = player[this.layer].avolve.plus(1);
             }
         }
@@ -163,7 +169,7 @@ addLayer("a", {
         ["display-text", function() { return tmp.goals.unlocks>=2 ? "Avolve(进化等级) = "+tmp[this.layer].displayFormula[1] : ''}],
         "blank", "blank",
         ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?("<h4>进化等级: "+formatWhole(player[this.layer].avolve)+"</h4>"):"" }],
-        ["bar", "Avolve"], ["bar", "Avolve2"], "blank",
+        ["bar", "Avolve"], "blank",
         ["buyable", 11],
     ],
     componentStyles: {

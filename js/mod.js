@@ -19,8 +19,13 @@ function displayFormula() {
 	let b = 't'
 	let b2 = '1'
 
+	let ro1 = '1'
+	if(player.ro.a.gte(1)){
+		ro1 = 'RA'
+	}
+
 	if(player.b.points.gte(1)){
-		b = 't<sup>'+colorText('log<sub>3</sub>( ','#bf8f8f')+'b + 1 '+colorText( ') + 1','#bf8f8f')+'</sup>'
+		b = 't<sup>'+colorText('log<sub>3</sub>( ','#bf8f8f')+'b + '+ro1+' '+colorText( ') + 1','#bf8f8f')+'</sup>'
 		b2 = 'b × 200'
 	}
 
@@ -49,9 +54,14 @@ function displayFormula() {
 function displayIntFormula() {
 	let b = format(player.points.mul(tmp.timeSpeed))
 	let b2 = format(n(1))
+	
+	let ro1 = n(1)
+	if(player.ro.a.gte(1)){
+		ro1 = n(player.ro.valueA)
+	}
 
 	if(player.b.points.gte(1)){
-		b = format(player.points.mul(tmp.timeSpeed))+'<sup>'+colorText('log<sub>'+format(n(3))+'</sub>( ', '#bf8f8f')+format(player.b.value)+' + '+format(n(1))+colorText(' ) + '+format(n(1)),'#bf8f8f')+'</sup>'
+		b = format(player.points.mul(tmp.timeSpeed))+'<sup>'+colorText('log<sub>'+format(n(3))+'</sub>( ', '#bf8f8f')+format(player.b.value)+' + '+format(ro1)+colorText(' ) + '+format(n(1)),'#bf8f8f')+'</sup>'
 		b2 = format(player.b.value.mul(200))
 	}
 
@@ -82,7 +92,7 @@ function n(n){
 
 function calculateValue(t) {
 	let b = player.b.points.gte(1) ? player.b.value.mul(200) : n(1)
-	let b2 = player.b.points.gte(1) ? n(t).pow(player.b.value.add(1).log(3).add(1)) : n(t)
+	let b2 = player.b.points.gte(1) ? n(t).pow(player.b.value.add(1).log(3).add(player.ro.valueA)) : n(t)
 	b = b.max(1)
 	let f = n(b2).mul(player.a.value).max(b).log(10)
 	let powG = n(1)
@@ -101,15 +111,15 @@ function updateValue() {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.21",
+	num: "0.22",
 	name: "远离赌博!",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
-	<h3>v0.21 - 远离赌博!</h3><br>
+	<h3>v0.22 - 远离赌博!</h3><br>
 		- 重新创建基础内容<br>
 		- 开发了转盘<br>
-		- 平衡到20<sup>0.7</sup>成就<br>
+		- 平衡到29<sup>0.7</sup>成就<br>
 	<br><br>
 	<h3>v0.2 - 跳跃即巅峰</h3><br>
 		- 重新创建基础内容<br>
@@ -199,7 +209,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return tmp.goals.unlocks>=5
+	return tmp.goals.unlocks>=5 && tmp.ac.unlocks>=3
 }
 
 
