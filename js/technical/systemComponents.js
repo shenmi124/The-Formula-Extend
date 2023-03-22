@@ -49,14 +49,14 @@ var systemComponents = {
 			v-bind:style="constructNodeStyle(layer)">
 			<span v-html="(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'"></span>
 			<tooltip
-      v-if="(tmp[layer].isLayer?player[layer].unlocked:tmp[layer].canClick)?(tmp[layer].tooltip != ''):(tmp[layer].tooltipLocked != '')"
+      v-if="tmp[layer].tooltip != ''"
 			:text="(tmp[layer].isLayer) ? (
-				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + tmp[layer].resource)
-				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'Reach ' + formatWhole(tmp[layer].requires) + ' ' + tmp[layer].baseResource + ' to unlock (You have ' + formatWhole(tmp[layer].baseAmount) + ' ' + tmp[layer].baseResource + ')')
+				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + (options.ch?tmp[layer].resource:tmp[layer].resourceEN))
+				: (tmp[layer].tooltipLocked ? options.ch? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : (options.ch?'达到 ':'Reach ') + formatWhole(tmp[layer].requires) + ' ' + (options.ch?tmp[layer].baseResource:tmp[layer].baseResourceEN) + (options.ch?' 以解锁 (你有 ':' to unlock (You have ') + formatWhole(tmp[layer].baseAmount) + ' ' + (options.ch?tmp[layer].baseResource:tmp[layer].baseResourceEN) + ')')
 			)
 			: (
 				tmp[layer].canClick ? (tmp[layer].tooltip ? tmp[layer].tooltip : 'I am a button!')
-				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'I am a button!')
+				: (tmp[layer].tooltipLocked ? options.ch? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : 'I am a button!')
 			)"></tooltip>
 			<node-mark :layer='layer' :data='tmp[layer].marked'></node-mark></span>
 		</button>
@@ -106,10 +106,15 @@ var systemComponents = {
 		template: `			
 		<div class="overlayThing" style="padding-bottom:7px; width: 90%; z-index: 1000; position: relative">
 		<span v-if="player.devSpeed && player.devSpeed != 1" class="overlayThing">
-			<br>Dev Speed: {{format(player.devSpeed)}}x<br>
+			<br>
+			<div v-if=options.ch>时间加速: {{format(player.devSpeed)}}x</div>
+			<div v-else>Dev Speed: {{format(player.devSpeed)}}x</div>
 		</span>
 		<span v-if="player.offTime !== undefined"  class="overlayThing">
-			<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
+			<br>
+			<div v-if=options.ch>离线加速剩余时间: {{formatTime(player.offTime.remain)}}</div>
+			<div v-else>Offline Time: {{formatTime(player.offTime.remain)}}</div>
+			<br>
 		</span>
 		<br>
 		<h2 class="overlayThing" id="points">n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2><br>
@@ -150,25 +155,29 @@ var systemComponents = {
     'options-tab': {
         template: `
         <table>
-			<tr>
-				<td><button class="opt" onclick="save()">保存</button></td>
-				<td><button class="opt" onclick="toggleOpt('autosave')">自动保存: {{ options.autosave?"开":"关" }}</button></td>
-				<td><button class="opt" onclick="hardReset()">硬重置</button></td>
+            <tr>
+				<td><button class="opt" onclick="save()">{{options.ch?'本地存档' :'Save'}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('autosave')">{{options.ch?'自动存档' :'AutoSave'}}: {{ options.offlineProd?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
+                <td><button class="opt" onclick="hardReset()">{{options.ch?'硬重置(删除存档)' :'HardReset'}}</button></td>
 			</tr>
 			<tr>
-				<td><button class="opt" onclick="exportSave()">导出</button></td>
-				<td><button class="opt" onclick="importSave()">导入</button></td>
-				<td><button class="opt" onclick="toggleOpt('offlineProd')">离线: {{ options.offlineProd?"开":"关" }}</button></td>
-			</tr>
-			<tr>
-				<td><button class="opt" onclick="switchTheme()">主题: {{ getThemeName() }}</button></td>
-                <td><button class="opt" onclick="adjustMSDisp()">显示里程碑: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hqTree')">高质量树: {{ options.hqTree?"开":"关" }}</button></td>
+                <td><button class="opt" onclick="exportSave()">{{options.ch?'导出存档(复制到黏贴板)' :'Export'}}</button></td>
+                <td><button class="opt" onclick="importSave()">{{options.ch?'导入存档':'Import'}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('offlineProd')">{{options.ch?'离线进度' :'Offline Prod'}}: {{ options.offlineProd?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">{{ options.hideChallenges?"隐藏":"显示" }}已经完成的挑战</button></td>
-                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">{{ options.forceOneTab?"总是单标签":"自动" }}</button></td>
+                <td><button class="opt" onclick="switchTheme()">{{options.ch?'背景主题':'Theme'}}: {{ getThemeName() }}</button></td>
+                <td><button class="opt" onclick="adjustMSDisp()">{{options.ch?'显示里程碑':'Show Milestones'}}: {{options.ch? MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)] : MS_DISPLAYS_EN[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('hqTree')">{{options.ch?'高质量树':'High-Quality Tree'}}: {{ options.hqTree?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
+            </tr>
+            <tr>
+                <td><button class="opt" onclick="toggleOpt('hideChallenges')">{{options.ch?'已完成挑战':'Completed Challenges'}}: {{ options.hideChallenges?(options.ch?"隐藏":"HIDDEN"):(options.ch?"显示":"SHOWN") }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">{{options.ch?'节点内容占据整个屏幕':'Single-Tab Mode'}}: {{ options.forceOneTab?(options.ch?"永远这样":"ALWAYS"):(options.ch?"自动调节":"AUTO") }}</button></td>
 			</tr> 
+			<br>
+			<tr>
+				<td><button class="opt" onclick="options.ch = !options.ch; needsCanvasUpdate = true">{{options.ch?'语言':'Language'}}: {{ options.ch?"中文(Chinese)":"英文(English)" }}</button></td>
+			</tr>
         </table>`
     },
 

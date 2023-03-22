@@ -22,6 +22,7 @@ addLayer("a2", {
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#f8a9ba",
     resource: "阿尔法能量", 
+    resourceEN: "Alpha Energy", 
     baseResource: "n", 
     baseAmount() {return player.a.value}, 
     type: "custom",
@@ -41,6 +42,11 @@ addLayer("a2", {
     prestigeButtonText() {
         let text = "重置以获得 "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> 阿尔法能量<br><br>";
         text += "需求: a(A) ≥ "+format(tmp[this.layer].getNextAt)
+        return text;
+    },
+    prestigeButtonTextEN() {
+        let text = "Reset for "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> Alpha Energy<br><br>";
+        text += "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -88,6 +94,7 @@ addLayer("a2", {
 	clickables: {
 		11: {
 			title:"-",
+			titleEN:"-",
 			canClick(){
 				return player.a2.beta.gt(0)
 			},
@@ -99,6 +106,7 @@ addLayer("a2", {
 		},
 		12: {
 			title:"+",
+			titleEN:"+",
 			canClick(){
 				return player.a2.points.sub(player.a2.beta).gt(0)
 			},

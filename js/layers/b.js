@@ -10,6 +10,7 @@ addLayer("b", {
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#3734ed",
     resource: "B能量", 
+    resourceEN: "B-Power", 
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
@@ -33,6 +34,7 @@ addLayer("b", {
     autoPrestige() { return false },
     resetsNothing() { return false },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
+    tooltipLockedEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
         let gain = tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).div(tmp[this.layer].requires).max(1).log(tmp[this.layer].base).root(tmp[this.layer].exponent)
@@ -55,12 +57,22 @@ addLayer("b", {
         text += "<br>要求指数: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
         return text;
     },
+    prestigeButtonTextEN() {
+        let text = "Reset for <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> B-Power<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "Next: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
+        else text += "Req: n(t) ≥ "+format(tmp[this.layer].getNextAt)
+        text += "<br>Req Base: "+format(tmp[this.layer].base)
+        text += "<br>Req Exponent: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
+        return text;
+    },
     row: 2,
     layerShown() { return tmp.goals.unlocks>=4 },
     tabFormat: [
         "main-display",
         "prestige-button",
-        ["display-text", function() { return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B能量,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" }],
+        ["display-text", function() {
+            return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" B能量之后,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" 
+        }],
         "blank",
         ["display-text", function() { return "<h3>b("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "b(B) = "+tmp[this.layer].displayFormula }],

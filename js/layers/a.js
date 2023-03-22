@@ -13,6 +13,7 @@ addLayer("a", {
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#eb3434",
     resource: "A能量",
+    resourceEN: "A-Power",
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
@@ -51,6 +52,13 @@ addLayer("a", {
         text += "<br>需求底数: "+format(tmp[this.layer].base)
         return text;
     },
+    prestigeButtonTextEN(){
+        let text = (tmp[this.layer].resetsNothing?"Gain ":"Reset for ")+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> A-Power<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "Next: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
+        else text += "Req: n(t) ≥ "+format(tmp[this.layer].getNextAt)
+        text += "<br>Req Base: "+format(tmp[this.layer].base)
+        return text
+    },
     row: 0,
     layerShown(){return true},
 	doReset(resettingLayer) {
@@ -70,6 +78,7 @@ addLayer("a", {
         f += po
 
         let f2 = '进化等级 × 0.005'
+        if(!options.ch)  f2 = 'level × 0.005'
         return [f,f2];
     }, 
     calculateValue(A=player[this.layer].points) {
@@ -109,6 +118,7 @@ addLayer("a", {
             },
             unlocked() { return tmp.goals.unlocks>=2 },
             display() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve.req)+" ("+format(100-tmp[this.layer].bars.Avolve.progress)+"%)" },
+            displayEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve.req)+" ("+format(100-tmp[this.layer].bars.Avolve.progress)+"%)" },
             fillStyle: {"background-color": "#ba2323"},
         },
     },
@@ -117,6 +127,7 @@ addLayer("a", {
         cols: 1,
         11: {
             title() { return "进化要求<br>÷"+format(tmp[this.layer].buyables[this.id].effect) },
+            titleEN() { return "Avolve Requirement<br>÷"+format(tmp[this.layer].buyables[this.id].effect) },
             effExp() {
                 let exp = new Decimal(3);
                 return exp;
@@ -128,6 +139,7 @@ addLayer("a", {
             cost(x=player[this.layer].buyables[this.id]) { return Decimal.pow(1.8, x).times(4).ceil() },
             target(r=player[this.layer].points) { return r.div(4).max(1).log(1.8).plus(1).floor() },
             display() { return "等级: "+formatWhole(player[this.layer].buyables[this.id])+"<br>价格: "+formatWhole(tmp[this.layer].buyables[this.id].cost)+" A能量" },
+            displayEN() { return "level: "+formatWhole(player[this.layer].buyables[this.id])+"<br>Cost: "+formatWhole(tmp[this.layer].buyables[this.id].cost)+" A-Power" },
             canAfford() { return player[this.layer].points.gte(layers[this.layer].buyables[this.id].cost()) },
             buy() {
                 if(tmp.ac.unlocks>=1){
@@ -146,12 +158,14 @@ addLayer("a", {
     milestones: {
         0: {
             effectDescription: "自动获取A能量.",
+            effectDescriptionEN: "Automate A-Power.",
             unlocked() { return hasAchievement("goals", 52) },
             done() { return hasAchievement("goals", 52) },
             toggles: [["a", "auto"]]
         },
         1: {
             effectDescription: "自动降低进化要求",
+            effectDescription: "Automate the Avolve Upgrade",
             unlocked() { return hasAchievement("goals", 73) },
             done() { return hasAchievement("goals", 73) },
             toggles: [["a", "autoAvolve"]],
@@ -166,9 +180,9 @@ addLayer("a", {
         ["display-text", function() { return "a(A) = "+tmp[this.layer].displayFormula[0] }],
         "blank",
         ["display-text", function() { return tmp.goals.unlocks>=2 ? "<h3>Avolve("+formatWhole(player[this.layer].avolve)+") = "+format(player[this.layer].valueA)+"</h3>" : ''}],
-        ["display-text", function() { return tmp.goals.unlocks>=2 ? "Avolve(进化等级) = "+tmp[this.layer].displayFormula[1] : ''}],
+        ["display-text", function() { return tmp.goals.unlocks>=2 ? (options.ch?"Avolve(进化等级) = ":"Avolve(level) = ")+tmp[this.layer].displayFormula[1] : ''}],
         "blank", "blank",
-        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?("<h4>进化等级: "+formatWhole(player[this.layer].avolve)+"</h4>"):"" }],
+        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?((options.ch?"<h4>进化等级: ":"Avolve Level: ")+formatWhole(player[this.layer].avolve)+"</h4>"):"" }],
         ["bar", "Avolve"], "blank",
         ["buyable", 11],
     ],

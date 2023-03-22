@@ -18,6 +18,7 @@ addLayer("ro", {
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#888",
     resource: "轮盘能量", 
+    resourceEN: "Wheel Energy", 
     type: "none",
     tooltipLocked() { return "" },
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -60,8 +61,12 @@ addLayer("ro", {
 	clickables: {
 		11: {
 			title:"<big><big><big>轮盘!</big></big></big><br>",
+			titleEN:"<big><big><big>Spin Wheel!</big></big></big><br>",
             display(){
                 return '<big><big>RoA —— 95%<br>RoB —— 5%<br><br>数量:0.1 ~ 10</big><br><br>上次: '+tmp.ro.clickables[11].last+'</big>'
+            },
+            displayEN(){
+                return '<big><big>RoA —— 95%<br>RoB —— 5%<br><br>Amount:0.1 ~ 10</big><br><br>Last: '+((tmp.ro.clickables[11].last==="无上次记录")?"No Result Yet":tmp.ro.clickables[11].last)+'</big>'
             },
             last(){return player.ro.last},
 			canClick(){
@@ -99,6 +104,7 @@ addLayer("ro", {
                 return player.ro.points.div(tmp[this.layer].bars.Ro1.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.min(tmp[this.layer].bars.Ro1.req))+" / "+format(tmp[this.layer].bars.Ro1.req)+" ("+format(100-tmp[this.layer].bars.Ro1.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.min(tmp[this.layer].bars.Ro1.req))+" / "+format(tmp[this.layer].bars.Ro1.req)+" ("+format(100-tmp[this.layer].bars.Ro1.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
         Ro2: {
@@ -112,6 +118,7 @@ addLayer("ro", {
                 return player.ro.points.sub(100).max(0).div(tmp[this.layer].bars.Ro2.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.sub(100).max(0).min(tmp[this.layer].bars.Ro2.req))+" / "+format(tmp[this.layer].bars.Ro2.req)+" ("+format(100-tmp[this.layer].bars.Ro2.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(100).max(0).min(tmp[this.layer].bars.Ro2.req))+" / "+format(tmp[this.layer].bars.Ro2.req)+" ("+format(100-tmp[this.layer].bars.Ro2.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
         Ro3: {
@@ -125,6 +132,7 @@ addLayer("ro", {
                 return player.ro.points.sub(200).max(0).div(tmp[this.layer].bars.Ro3.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.sub(200).max(0).min(tmp[this.layer].bars.Ro3.req))+" / "+format(tmp[this.layer].bars.Ro3.req)+" ("+format(100-tmp[this.layer].bars.Ro3.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(200).max(0).min(tmp[this.layer].bars.Ro3.req))+" / "+format(tmp[this.layer].bars.Ro3.req)+" ("+format(100-tmp[this.layer].bars.Ro3.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
         Ro4: {
@@ -138,6 +146,7 @@ addLayer("ro", {
                 return player.ro.points.sub(300).max(0).div(tmp[this.layer].bars.Ro4.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.sub(300).max(0).min(tmp[this.layer].bars.Ro4.req))+" / "+format(tmp[this.layer].bars.Ro4.req)+" ("+format(100-tmp[this.layer].bars.Ro4.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(300).max(0).min(tmp[this.layer].bars.Ro4.req))+" / "+format(tmp[this.layer].bars.Ro4.req)+" ("+format(100-tmp[this.layer].bars.Ro4.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
         Ro5: {
@@ -151,12 +160,13 @@ addLayer("ro", {
                 return player.ro.points.sub(400).max(0).div(tmp[this.layer].bars.Ro5.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.sub(400).max(0).min(tmp[this.layer].bars.Ro5.req))+" / "+format(tmp[this.layer].bars.Ro5.req)+" ("+format(100-tmp[this.layer].bars.Ro5.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(400).max(0).min(tmp[this.layer].bars.Ro5.req))+" / "+format(tmp[this.layer].bars.Ro5.req)+" ("+format(100-tmp[this.layer].bars.Ro5.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
     },
     tabFormat: [
         "main-display",
-        ["display-text", function() { return "获取 = baseRo = (+"+format(player.ro.value)+"/s)"}],
+        ["display-text", function() { return `${(options.ch? "获取" : "Gain")} = baseRo = (${format(player.ro.value)}/s)`}],
         "blank",
         ["display-text", function() { return "<h3>baseRo("+format(player.b.value)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "baseRo(b) = "+tmp[this.layer].displayFormula[0] }],

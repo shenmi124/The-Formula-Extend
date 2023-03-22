@@ -1,6 +1,6 @@
 function prestigeButtonText(layer) {
 	if (layers[layer].prestigeButtonText !== undefined)
-		return run(layers[layer].prestigeButtonText(), layers[layer])
+		return options.ch? run(layers[layer].prestigeButtonText(), layers[layer]) : run(layers[layer].prestigeButtonTextEN(), layers[layer])
 	if (tmp[layer].type == "normal")
 		return `${player[layer].points.lt(1e3) ? (tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for ") : ""}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource} ${tmp[layer].resetGain.lt(100) && player[layer].points.lt(1e3) ? `<br><br>Next at ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAt) : format(tmp[layer].nextAt))} ${tmp[layer].baseResource}` : ""}`
 	if (tmp[layer].type == "static")
