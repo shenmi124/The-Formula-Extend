@@ -56,7 +56,11 @@ addLayer("ro", {
         player.ro.valueA = n(tmp.ro.calculateValueRo[0])
         player.ro.valueB = n(tmp.ro.calculateValueRo[1])
 
-        player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(5))
+        if(tmp.goals.unlocks>=5){
+            player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(tmp.ac.unlocks>=4 ? 7 : 5)).max(0)
+        }else{
+            player.ro.points = n(0)
+        }
     },
 	clickables: {
 		11: {
