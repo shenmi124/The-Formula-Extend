@@ -17,7 +17,7 @@ addLayer("int", {
     requires: new Decimal(1e7),
     base: new Decimal(10),
     exponent: new Decimal(1),
-    layerShown() { return tmp.goals.unlocks>=6 },
+    layerShown() { return tmp.goals.unlocks>=111 },
     tooltipLocked() { return "要求: 时间速率 ≥ "+formatWhole(tmp[this.layer].requires)+"x" },
     prestigeButtonText() {
         if (!player[this.layer].unlocked) return "重置所有之前的进度来进入集合的王国"

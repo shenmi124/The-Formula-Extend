@@ -111,15 +111,15 @@ function updateValue() {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.22",
+	num: "0.23",
 	name: "远离赌博!",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
-	<h3>v0.22 - 远离赌博!</h3><br>
+	<h3>v0.23 - 远离赌博!</h3><br>
 		- 重新创建基础内容<br>
 		- 开发了转盘<br>
-		- 平衡到29<sup>0.7</sup>成就<br>
+		- 平衡到35<sup>0.7</sup>成就<br>
 	<br><br>
 	<h3>v0.2 - 跳跃即巅峰</h3><br>
 		- 重新创建基础内容<br>
@@ -209,7 +209,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return tmp.goals.unlocks>=5 && tmp.ac.unlocks>=3
+	return tmp.goals.unlocks>=6
 }
 
 

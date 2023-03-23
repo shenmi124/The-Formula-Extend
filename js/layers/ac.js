@@ -46,6 +46,11 @@ addLayer("ac", {
                     descEN: "Reach Perk Tier 3",
                     req: 3,
                 },
+                {
+                    desc: "到达特权阶级4",
+                    descEN: "Reach Perk Tier 4",
+                    req: 4,
+                },
             ],
             retrieveUnlockData() { return tmp[this.layer].buyables[11].unlockData[player[this.layer].buyables[11].toNumber()] },
             title() {
@@ -118,6 +123,16 @@ addLayer("ac", {
 			},
             unlocked(){return tmp.ac.unlocks>=3}
 		},
+		4: {
+			requirementDescription: "特权阶级4",
+			requirementDescriptionEN: "Perk Tier 4",
+			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量,B能量,转盘<br><br>exp不再被β影响,持续β最大<br><br>一次可以获得50级的进化<br>自动购买进化<br>你可以最大购买B能量<br>>————————————————————————————————————————————————————————————————————————<",
+			effectDescriptionEN: ">————————————————————————————————————————————————————————————————————————<<br>>Fully Reset Goals,A-Power,Alpha Energy,B-Power,Wheel<br><br>Wheel Upgrade<br><br>Automate A-Power<br>Bulk buy 5 Avolve levels<br>Alpha Energy do not reset A-Power<br>>————————————————————————————————————————————————————————————————————————<",
+			done() {
+				return tmp.ac.unlocks>=4
+			},
+            unlocked(){return tmp.ac.unlocks>=4}
+		},
     },
     achievements: {
         11: {
@@ -143,6 +158,14 @@ addLayer("ac", {
             tooltip: "获得10个成就",
             tooltipEN: "Complete 10 Goals.",
             unlocked() { return tmp.ac.unlocks>=2 },
+        },
+        14: {
+            name: "11",
+            nameEN: "11",
+            done() { return n(tmp.goals.achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor().gte(11) },
+            tooltip: "获得11个成就",
+            tooltipEN: "Complete 11 Goals.",
+            unlocked() { return tmp.ac.unlocks>=3 },
         },
     },
     nodeStyle: { width: "50px", height: "50px", "min-width": "50px" },

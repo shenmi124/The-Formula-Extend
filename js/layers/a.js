@@ -96,11 +96,18 @@ addLayer("a", {
 
         if (tmp.goals.unlocks>=2) {
             if(tmp[this.layer].bars.Avolve.progress>=1){
+                if(tmp.ac.unlocks>=4){
+                    player[this.layer].avolve = player[this.layer].avolve.plus(45);
+                }
                 if(tmp.ac.unlocks>=3){
                     player[this.layer].avolve = player[this.layer].avolve.plus(4);
                 }
                 player[this.layer].avolve = player[this.layer].avolve.plus(1);
             }
+        }
+        
+        if(tmp.ac.unlocks>=4 && tmp.a.buyables[11].canAfford){
+            layers[this.layer].buyables[11].buy()
         }
     },
     bars: {
@@ -154,22 +161,6 @@ addLayer("a", {
             },
             unlocked() { return tmp[this.layer].bars.Avolve.unlocked },
         },  
-    },
-    milestones: {
-        0: {
-            effectDescription: "自动获取A能量.",
-            effectDescriptionEN: "Automate A-Power.",
-            unlocked() { return hasAchievement("goals", 52) },
-            done() { return hasAchievement("goals", 52) },
-            toggles: [["a", "auto"]]
-        },
-        1: {
-            effectDescription: "自动降低进化要求",
-            effectDescription: "Automate the Avolve Upgrade",
-            unlocked() { return hasAchievement("goals", 73) },
-            done() { return hasAchievement("goals", 73) },
-            toggles: [["a", "autoAvolve"]],
-        },
     },
     tabFormat: [
         "main-display",

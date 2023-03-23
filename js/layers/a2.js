@@ -1,11 +1,20 @@
 addLayer("a2", {
     name: "α",
     symbol() {
-        if(player.a2.gamma.gte(1)){
-            return "α/β/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)+'/'+format(player[this.layer].gamma,0)
-        }
-        if(player[this.layer].unlocked){
-            return "α/β = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)
+        if(tmp.ac.unlocks>=4){
+            if(player.a2.gamma.gte(1)){
+                return "α/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].gamma,0)
+            }
+            if(player[this.layer].unlocked){
+                return "α = "+format(player[this.layer].points,0)
+            }
+        }else{
+            if(player.a2.gamma.gte(1)){
+                return "α/β/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)+'/'+format(player[this.layer].gamma,0)
+            }
+            if(player[this.layer].unlocked){
+                return "α/β = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)
+            }
         }
         return "α"
     },
@@ -31,7 +40,7 @@ addLayer("a2", {
     getResetGain() {
         let amt = 0
         if(player.a.value.gte(player.a2.points.add(1))){amt = 1}
-        if(tmp.ac.unlocks>=2){amt = player.a.value.sub(player.a2.points).max(0).floor()}
+        if(tmp.ac.unlocks>=2){amt = player.a.value.sub(player.a2.points).max(0).floor().min(n(300).sub(player.a2.points))}
 
         return new Decimal(amt)
     },
@@ -41,7 +50,7 @@ addLayer("a2", {
     },
     prestigeButtonText() {
         let text = "重置以获得 "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> 阿尔法能量<br><br>";
-        text += "需求: a(A) ≥ "+format(tmp[this.layer].getNextAt)
+        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) ? '您无法获得更多阿尔法能量' : "需求: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
     prestigeButtonTextEN() {
@@ -53,18 +62,25 @@ addLayer("a2", {
     layerShown(){return tmp.goals.unlocks>=1},
     displayFormula() {
         let f = "α - β + 1";
+        if(tmp.ac.unlocks>=4){
+            f = "α + 1";
+        }
 
         let f2 = colorText('( ','#bf8f8f')+' β + 1 '+colorText(' )<sup>α / 20 + 0.7</sup','#bf8f8f')
 
         let f3 = '1 - α × 0.24'
         if(tmp.ac.unlocks>=1){f3 = colorText('Max( ','#bf8f8f')+'1 - α × 0.24, 0.02'+colorText(' ) ','#bf8f8f')}
 
-        let fg = colorText('γ × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ, 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1','#77bf5f')
+        let roc = player.ro.c.gt(0) ? '<sup>RC</sup>' : ''
+        let fg = colorText('γ'+roc+' × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ'+roc+', 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1','#77bf5f')
         
         return [f, f2, f3, fg];
     },
     calculateValue(val=player[this.layer].points) {
-        val=val.sub(player.a2.beta).add(1)
+        val = val.sub(player.a2.beta).add(1)
+        if(tmp.ac.unlocks>=4){
+            val = val.add(player.a2.beta)
+        }
 
         return val;
     },
@@ -74,7 +90,7 @@ addLayer("a2", {
         return a;
     },
     calculateValueGamma() {
-        let a = player.a2.gamma.mul(0.2).mul(player.a2.gamma.max(1).div(n(2).add(player.a2.gamma))).add(1)
+        let a = player.a2.gamma.pow(player.ro.valueC).mul(0.2).mul(player.a2.gamma.pow(player.ro.valueC).max(1).div(n(2).add(player.a2.gamma))).add(1)
 
         return a;
     },
@@ -85,6 +101,10 @@ addLayer("a2", {
 
         if(n(player.a.buyables[11]).gt(player.a2.gamma)){
             player.a2.gamma = player.a.buyables[11]
+        }
+
+        if(tmp.ac.unlocks>=4){
+            player.a2.beta = n(player.a2.points)
         }
     },
     timespeedBoost(){
@@ -103,6 +123,7 @@ addLayer("a2", {
                 player.points = n(0)
 			},
 			style() {return {'height': "50px", 'min-height': "50px", 'width': '50px',"border-radius": "5%",}},
+            unlocked(){return tmp.ac.unlocks<=3},
 		},
 		12: {
 			title:"+",
@@ -115,6 +136,7 @@ addLayer("a2", {
                 player.points = n(0)
 			},
 			style() {return {'height': "50px", 'min-height': "50px", 'width': '50px',"border-radius": "5%",}},
+            unlocked(){return tmp.ac.unlocks<=3},
 		},
 	},
     tabFormat: [

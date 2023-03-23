@@ -29,8 +29,8 @@ addLayer("b", {
         return new Decimal(exp);
     },
     costScalingStart: new Decimal(15),
-    costScalingInc() { return new Decimal(0.05) },
-    canBuyMax() { return false },
+    costScalingInc() { return new Decimal(0.0317) },
+    canBuyMax() { return tmp.ac.unlocks>=4 },
     autoPrestige() { return false },
     resetsNothing() { return false },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },

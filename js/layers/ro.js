@@ -12,6 +12,8 @@ addLayer("ro", {
         valueA: new Decimal(0),
         b: new Decimal(0),
         valueB: new Decimal(0),
+        c: new Decimal(0),
+        valueC: new Decimal(0),
 
         last: '无上次记录',
     }},
@@ -33,7 +35,9 @@ addLayer("ro", {
 
         let f3 = 'RoB / 50'
 
-        return [f,f2,f3]
+        let f4 = colorText('( ','#77bf5f')+colorText('log<sub>100</sub>(','#bf8f8f')+' RoC + 100 '+colorText(' ) ','#bf8f8f')+colorText(')<sup>0.3</sup> ','#77bf5f')
+
+        return [f,f2,f3,f4]
     },
     calculateValue(val=player.b.value) {
         val=val.div(2)
@@ -44,17 +48,29 @@ addLayer("ro", {
         let f = player.ro.a.pow(0.75).add(1)
         
         let f2 = player.ro.b.div(50)
+        
+        let f3 = player.ro.c.add(100).log(100).pow(0.3)
 
-        return [f,f2];
+        return [f,f2,f3];
     },
     roReq(){
         return n(100)
+    },
+    roLevel(){
+        return tmp.ac.unlocks>=3 ? 2 : 1
+    },
+    roNum(){
+        return tmp.ro.roLevel>=2 ? '0.1 ~ 100' : '0.1 ~ 10'
+    },
+    roRare(){
+        return tmp.ro.roLevel>=2 ? 'RoA —— 75%<br>RoB —— 20%<br>RoC —— 5%' : 'RoA —— 95%<br>RoB —— 5%'
     },
     update(diff) {
         player.ro.value = n(tmp.ro.calculateValue)
 
         player.ro.valueA = n(tmp.ro.calculateValueRo[0])
         player.ro.valueB = n(tmp.ro.calculateValueRo[1])
+        player.ro.valueC = n(tmp.ro.calculateValueRo[2])
 
         if(tmp.goals.unlocks>=5){
             player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(tmp.ac.unlocks>=4 ? 7 : 5)).max(0)
@@ -64,10 +80,10 @@ addLayer("ro", {
     },
 	clickables: {
 		11: {
-			title:"<big><big><big>轮盘!</big></big></big><br>",
-			titleEN:"<big><big><big>Spin Wheel!</big></big></big><br>",
+			title(){return "<big><big><big>轮盘!</big></big></big>"},
+			titleEN:"<big><big><big>Spin Wheel!</big></big></big>",
             display(){
-                return '<big><big>RoA —— 95%<br>RoB —— 5%<br><br>数量:0.1 ~ 10</big><br><br>上次: '+tmp.ro.clickables[11].last+'</big>'
+                return (tmp.ro.roLevel>=2 ? '等级: 2<br>' : '')+'<br><big><big>'+tmp.ro.roRare+'<br><br>数量:'+tmp.ro.roNum+'</big><br><br>上次: '+tmp.ro.clickables[11].last+'</big>'
             },
             displayEN(){
                 return '<big><big>RoA —— 95%<br>RoB —— 5%<br><br>Amount:0.1 ~ 10</big><br><br>Last: '+((tmp.ro.clickables[11].last==="无上次记录")?"No Result Yet":tmp.ro.clickables[11].last)+'</big>'
@@ -77,23 +93,39 @@ addLayer("ro", {
 				return player.ro.points.gte(tmp.ro.roReq)
 			},
 			onClick(){
-                let pow = n(Math.random() * 2 - 1)
+                let pow = tmp.ro.roLevel>=2 ? n(Math.random() * 3 - 1) : n(Math.random() * 2 - 1)
                 let num = n(10).pow(pow)
 
                 let a = (Math.random() * 100)
-                if(a>=95){
-                    player.ro.b = player.ro.b.add(num)
-
-                    player.ro.last = 'RoB '+format(num)
+                if(tmp.ro.roLevel>=2){
+                    if(a>=95){
+                        player.ro.c = player.ro.c.add(num)
+    
+                        player.ro.last = 'RoC '+format(num)
+                    }else if(a>=75){
+                        player.ro.b = player.ro.b.add(num)
+    
+                        player.ro.last = 'RoB '+format(num)
+                    }else{
+                        player.ro.a = player.ro.a.add(num)
+    
+                        player.ro.last = 'RoA '+format(num)
+                    }
                 }else{
-                    player.ro.a = player.ro.a.add(num)
+                    if(a>=95){
+                        player.ro.b = player.ro.b.add(num)
 
-                    player.ro.last = 'RoA '+format(num)
+                        player.ro.last = 'RoB '+format(num)
+                    }else{
+                        player.ro.a = player.ro.a.add(num)
+
+                        player.ro.last = 'RoA '+format(num)
+                    }
                 }
 
                 player.ro.points = player.ro.points.sub(tmp.ro.roReq)
 			},
-			style() {return {'height': "250px", 'min-height': "250px", 'width': '250px',"border-radius": "50%",}},
+			style() {return {'height': "250px", 'min-height': "250px", 'width': '250px',"border-radius": "50%","border-color": tmp.ro.roLevel>=2 ? 'yellow' : ''}},
 		},
 	},
     bars: {
@@ -160,11 +192,44 @@ addLayer("ro", {
             req(){
                 return n(tmp.ro.roReq)
             },
+            unlocked(){return tmp.ac.unlocks>=4},
             progress() {
                 return player.ro.points.sub(400).max(0).div(tmp[this.layer].bars.Ro5.req)
             },
             display() { return "转盘能量: "+format(player.ro.points.sub(400).max(0).min(tmp[this.layer].bars.Ro5.req))+" / "+format(tmp[this.layer].bars.Ro5.req)+" ("+format(100-tmp[this.layer].bars.Ro5.progress)+"%)" },
             displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(400).max(0).min(tmp[this.layer].bars.Ro5.req))+" / "+format(tmp[this.layer].bars.Ro5.req)+" ("+format(100-tmp[this.layer].bars.Ro5.progress)+"%)" },
+            fillStyle: {"background-color": "#888"},
+        },
+        Ro6: {
+            direction: RIGHT,
+            width: 600,
+            height: 20,
+            req(){
+                return n(tmp.ro.roReq)
+            },
+            idR(){return n(5)},
+            unlocked(){return tmp.ac.unlocks>=4},
+            progress() {
+                return player.ro.points.sub(n(tmp[this.layer].bars.Ro6.req).mul(tmp[this.layer].bars.Ro6.idR)).max(0).div(tmp[this.layer].bars.Ro6.req)
+            },
+            display() { return "转盘能量: "+format(player.ro.points.sub(n(tmp[this.layer].bars.Ro6.req).mul(tmp[this.layer].bars.Ro6.idR)).max(0).min(tmp[this.layer].bars.Ro6.req))+" / "+format(tmp[this.layer].bars.Ro6.req)+" ("+format(100-tmp[this.layer].bars.Ro6.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(n(tmp[this.layer].bars.Ro6.req).mul(tmp[this.layer].bars.Ro6.idR)).max(0).min(tmp[this.layer].bars.Ro6.req))+" / "+format(tmp[this.layer].bars.Ro6.req)+" ("+format(100-tmp[this.layer].bars.Ro6.progress)+"%)" },
+            fillStyle: {"background-color": "#888"},
+        },
+        Ro7: {
+            direction: RIGHT,
+            width: 600,
+            height: 20,
+            req(){
+                return n(tmp.ro.roReq)
+            },
+            idR(){return n(6)},
+            unlocked(){return tmp.ac.unlocks>=4},
+            progress() {
+                return player.ro.points.sub(n(tmp[this.layer].bars.Ro7.req).mul(tmp[this.layer].bars.Ro7.idR)).max(0).div(tmp[this.layer].bars.Ro7.req)
+            },
+            display() { return "转盘能量: "+format(player.ro.points.sub(n(tmp[this.layer].bars.Ro7.req).mul(tmp[this.layer].bars.Ro7.idR)).max(0).min(tmp[this.layer].bars.Ro7.req))+" / "+format(tmp[this.layer].bars.Ro7.req)+" ("+format(100-tmp[this.layer].bars.Ro7.progress)+"%)" },
+            displayEN() { return "Wheel Energy: "+format(player.ro.points.sub(n(tmp[this.layer].bars.Ro7.req).mul(tmp[this.layer].bars.Ro7.idR)).max(0).min(tmp[this.layer].bars.Ro7.req))+" / "+format(tmp[this.layer].bars.Ro7.req)+" ("+format(100-tmp[this.layer].bars.Ro7.progress)+"%)" },
             fillStyle: {"background-color": "#888"},
         },
     },
@@ -181,6 +246,8 @@ addLayer("ro", {
         ["bar", "Ro3"],
         ["bar", "Ro4"],
         ["bar", "Ro5"],
+        ["bar", "Ro6"],
+        ["bar", "Ro7"],
         "blank",
         "blank",
         "blank",
@@ -193,6 +260,9 @@ addLayer("ro", {
         "blank",
         ["display-text", function() { return "<h3>RB("+format(player[this.layer].b)+") = "+format(player[this.layer].valueB)+"</h3>" }],
         ["display-text", function() { return "RB(RoB) = "+tmp[this.layer].displayFormula[2] }],
+        "blank",
+        ["display-text", function() { return tmp.ro.roLevel>=2 ? "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>" : '' }],
+        ["display-text", function() { return tmp.ro.roLevel>=2 ? "RC(RoC) = "+tmp[this.layer].displayFormula[3] : '' }],
     ],
     componentStyles: {
         buyable: {
