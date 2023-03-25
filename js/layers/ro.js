@@ -9,11 +9,17 @@ addLayer("ro", {
 		points: new Decimal(0),
         value: new Decimal(0),
         a: new Decimal(0),
+        aPower: new Decimal(0),
         valueA: new Decimal(0),
+        valueAPower: new Decimal(0),
         b: new Decimal(0),
+        bPower: new Decimal(0),
         valueB: new Decimal(0),
+        valueBPower: new Decimal(0),
         c: new Decimal(0),
+        cPower: new Decimal(0),
         valueC: new Decimal(0),
+        valueCPower: new Decimal(0),
 
         last: '无上次记录',
     }},
@@ -53,6 +59,15 @@ addLayer("ro", {
 
         return [f,f2,f3];
     },
+    calculateValueRoPower(){
+        let f = player.ro.aPower.pow(0.75).add(1)
+        
+        let f2 = player.ro.bPower.div(50)
+        
+        let f3 = player.ro.cPower.add(100).log(100).pow(0.3)
+
+        return [f,f2,f3];
+    },
     roReq(){
         return n(100)
     },
@@ -71,6 +86,10 @@ addLayer("ro", {
         player.ro.valueA = n(tmp.ro.calculateValueRo[0])
         player.ro.valueB = n(tmp.ro.calculateValueRo[1])
         player.ro.valueC = n(tmp.ro.calculateValueRo[2])
+        
+        player.ro.valueAPower = n(tmp.ro.calculateValueRoPower[0])
+        player.ro.valueBPower = n(tmp.ro.calculateValueRoPower[1])
+        player.ro.valueCPower = n(tmp.ro.calculateValueRoPower[2])
 
         if(tmp.goals.unlocks>=5){
             player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(tmp.ac.unlocks>=4 ? 7 : 5)).max(0)
@@ -99,15 +118,27 @@ addLayer("ro", {
                 let a = (Math.random() * 100)
                 if(tmp.ro.roLevel>=2){
                     if(a>=95){
-                        player.ro.c = player.ro.c.add(num)
+                        if(player.b.powerData){
+                            player.ro.cPower = player.ro.cPower.add(num)
+                        }else{
+                            player.ro.c = player.ro.c.add(num)
+                        }
     
                         player.ro.last = 'RoC '+format(num)
                     }else if(a>=75){
-                        player.ro.b = player.ro.b.add(num)
+                        if(player.b.powerData){
+                            player.ro.bPower = player.ro.bPower.add(num)
+                        }else{
+                            player.ro.b = player.ro.b.add(num)
+                        }
     
                         player.ro.last = 'RoB '+format(num)
                     }else{
-                        player.ro.a = player.ro.a.add(num)
+                        if(player.b.powerData){
+                            player.ro.aPower = player.ro.aPower.add(num)
+                        }else{
+                            player.ro.a = player.ro.a.add(num)
+                        }
     
                         player.ro.last = 'RoA '+format(num)
                     }
@@ -255,14 +286,29 @@ addLayer("ro", {
         'clickables',
         "blank",
         "blank",
-        ["display-text", function() { return "<h3>RA("+format(player[this.layer].a)+") = "+format(player[this.layer].valueA)+"</h3>" }],
-        ["display-text", function() { return "RA(RoA) = "+tmp[this.layer].displayFormula[1] }],
+        ["display-text", function() {
+            if(tmp.goals.unlocks>=6){
+                return "<h3>RA("+format(player[this.layer].a)+") | RA<sub></sub>("+format(player[this.layer].aPower)+") = "+format(player[this.layer].valueA)+" | "+format(player[this.layer].valueAPower)+"</h3>"
+            }
+            return "<h3>RA("+format(player[this.layer].a)+") = "+format(player[this.layer].valueA)+"</h3>"
+        }],
+        ["display-text", function() { return (tmp.goals.unlocks>=6 ? 'RA | RA<sub>p</sub>' : 'RA')+"(RoA) = "+tmp[this.layer].displayFormula[1] }],
         "blank",
-        ["display-text", function() { return "<h3>RB("+format(player[this.layer].b)+") = "+format(player[this.layer].valueB)+"</h3>" }],
-        ["display-text", function() { return "RB(RoB) = "+tmp[this.layer].displayFormula[2] }],
+        ["display-text", function() {
+            if(tmp.goals.unlocks>=6){
+                return "<h3>RB("+format(player[this.layer].b)+") | RB<sub></sub>("+format(player[this.layer].bPower)+") = "+format(player[this.layer].valueB)+" | "+format(player[this.layer].valueBPower)+"</h3>"
+            }
+            return "<h3>RB("+format(player[this.layer].b)+") = "+format(player[this.layer].valueB)+"</h3>"
+        }],
+        ["display-text", function() { return (tmp.goals.unlocks>=6 ? 'RB | RB<sub>p</sub>' : 'RB')+"(RoB) = "+tmp[this.layer].displayFormula[2] }],
         "blank",
-        ["display-text", function() { return tmp.ro.roLevel>=2 ? "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>" : '' }],
-        ["display-text", function() { return tmp.ro.roLevel>=2 ? "RC(RoC) = "+tmp[this.layer].displayFormula[3] : '' }],
+        ["display-text", function() {
+            if(tmp.goals.unlocks>=6){
+                return "<h3>RC("+format(player[this.layer].c)+") | RC<sub></sub>("+format(player[this.layer].cPower)+") = "+format(player[this.layer].valueC)+" | "+format(player[this.layer].valueCPower)+"</h3>"
+            }
+            return "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>"
+        }],
+        ["display-text", function() { return tmp.ro.roLevel>=2 ? (tmp.goals.unlocks>=6 ? 'RC | RC<sub>p</sub>' : 'RC')+"(RoC) = "+tmp[this.layer].displayFormula[3] : '' }],
     ],
     componentStyles: {
         buyable: {

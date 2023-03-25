@@ -8,7 +8,7 @@ addLayer("goals", {
         achievements: [],
     }},
     tooltip() {
-        if(options.ch) return "您已经完成<br>"+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted))+"<sup>0.7</sup> = "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor())+"<br>个成就"
+        if(options.ch) return "您已经完成"+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted))+"<sup>0.7</sup> = "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor())+"个成就"
         return formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted))+"<sup>0.7</sup> = "+formatWhole(n(tmp[this.layer].achsCompleted).add(tmp.ac.achsCompleted).pow(0.7).floor())+" Goals completed"
     },
     color: "#cbff3b",
@@ -69,6 +69,11 @@ addLayer("goals", {
                     desc: "解锁电池",
                     descEN: "Unlock Batteries",
                     req: 12,
+                },
+                {
+                    desc: "解锁压缩点数",
+                    descEN: "Unlock Batteries",
+                    req: 13,
                 },
                 {
                     desc: "解锁C能量",
@@ -374,34 +379,34 @@ addLayer("goals", {
             unlocked() { return  hasAchievement(this.layer, 56) }
         },
         62: {
-            name: "回来拿这个成就了?",
-            done() { return false },
-            tooltip: "达到进化等级 308. 奖励: 时间速率x2, 同时 <span style='font-size: 17.5px;'>a</span> 的对数加算到 n(t) 中的 <span style='font-size: 17.5px;'>t</span> 的指数里.",
-            unlocked() { return false },
+            name: "我猜那个不再是没用的了...",
+            done() { return player.b.power.gte(1) },
+            tooltip: "B<sub>01</sub> ≥ 1",
+            unlocked() { return tmp.goals.unlocks>=6 },
         },
         63: {
             name: "太阳系钟摆",
-            done() { return false },
-            tooltip: "在不激活电池的情况下让钟显示2:00:00. 奖励: 一天的长度/2, 天数不再衰减, 当一天过去时, 钟不会重置.",
-            unlocked() { return false },
+            done() { return player.b.power.gte(10) },
+            tooltip: "B<sub>01</sub> ≥ 10",
+            unlocked() { return tmp.goals.unlocks>=6 },
         },
         64: {
-            name: "额，加拿大人?",
-            done() { return false },
-            tooltip: "达到 105,000 A能量. 奖励: <span style='font-size: 17.5px;'>c</span> 加算到 b(B).",
-            unlocked() { return false },
+            name: "你多nice(69)啊!",
+            done() { return player.b.power.gte(69) },
+            tooltip: "B<sub>01</sub> ≥ 69",
+            unlocked() { return tmp.goals.unlocks>=6 },
         },
         65: {
-            name: "我猜那个不再是没用的了...",
-            done() { return false },
-            tooltip: "让进化的需求/1e55. 奖励: 这个升级的等级加算到这个升级的指数中, A能量以更强的公式加成a(A), 双倍化时间速率.",
-            unlocked() { return false },
+            name: "这是timewall吗?",
+            done() { return player.b.time2.gte(1200) },
+            tooltip: "t<sub>02</sub> ≥ 1200",
+            unlocked() { return hasAchievement(this.layer, 62) },
         },
         66: {
-            name: "真正的一年",
-            done() { return false },
-            tooltip: "让钟至少显示 8,765:45:36. 奖励: 成就倍增时间速率, 但时间速率/4. 同时, 一天的长度又又被减半了.",
-            unlocked() { return false }
+            name: "很不幸你被卡住了,但是你获得了50%的宽恕",
+            done() { return player.value.gte(n("1.797e308").pow(0.5)) },
+            tooltip: "让 n(t) ≥ "+format(n("1.797e308").pow(0.5)),
+            unlocked() { return hasAchievement(this.layer, 65) }
         },
         71: {
             name: "最leet的函数(注:leet是黑客语言,对应1337)",

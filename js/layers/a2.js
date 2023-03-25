@@ -72,7 +72,8 @@ addLayer("a2", {
         if(tmp.ac.unlocks>=1){f3 = colorText('Max( ','#bf8f8f')+'1 - α × 0.24, 0.02'+colorText(' ) ','#bf8f8f')}
 
         let roc = player.ro.c.gt(0) ? '<sup>RC</sup>' : ''
-        let fg = colorText('γ'+roc+' × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ'+roc+', 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1','#77bf5f')
+        let g6 = tmp.goals.unlocks>=6 ? ' + B<sub>01</sub> / 222.22' : ''
+        let fg = colorText('γ'+roc+' × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ'+roc+', 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1'+g6,'#77bf5f')
         
         return [f, f2, f3, fg];
     },
@@ -90,7 +91,7 @@ addLayer("a2", {
         return a;
     },
     calculateValueGamma() {
-        let a = player.a2.gamma.pow(player.ro.valueC).mul(0.2).mul(player.a2.gamma.pow(player.ro.valueC).max(1).div(n(2).add(player.a2.gamma))).add(1)
+        let a = player.a2.gamma.pow(player.ro.valueC).mul(0.2).mul(player.a2.gamma.pow(player.ro.valueC).max(1).div(n(2).add(player.a2.gamma))).add(1).add(player.b.power.div(222.22))
 
         return a;
     },

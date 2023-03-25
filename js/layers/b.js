@@ -1,14 +1,21 @@
 addLayer("b", {
     name: "B",
-    symbol() { return player[this.layer].unlocked?("b = "+format(player[this.layer].value)):"B" },
+    symbol() {
+        let g6 = player.b.power.gte(1) && player.b.powerData==true ? ' power = '+format(player[this.layer].powerValue) : ''
+        return player[this.layer].unlocked? ("b = "+format(player[this.layer].value))+g6 : "B"
+    },
     position: 1,
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
         value: new Decimal(0),
+        time2: new Decimal(0),
+        power: new Decimal(0),
+        powerValue: new Decimal(0),
+        powerData: false,
     }},
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
-    color: "#3734ed",
+    color: "#4946ee",
     resource: "B能量", 
     resourceEN: "B-Power", 
     baseResource: "n", 
@@ -33,6 +40,10 @@ addLayer("b", {
     canBuyMax() { return tmp.ac.unlocks>=4 },
     autoPrestige() { return false },
     resetsNothing() { return false },
+    tooltip(){
+        let g6 = player.b.power.gte(1) ? '<br><br>'+format(player[this.layer].power)+' B<sub>01</sub><br>( '+format(player[this.layer].powerValue)+' / '+format(tmp.b.bars.Power.req)+' )' : ''
+        return formatWhole(player.b.points)+' B能量'+g6
+    },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     tooltipLockedEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
@@ -77,101 +88,73 @@ addLayer("b", {
         ["display-text", function() { return "<h3>b("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "b(B) = "+tmp[this.layer].displayFormula }],
         "blank", "blank",
-        ["display-text", function() { return tmp[this.layer].batteriesUnl?("电池: "+formatWhole(tmp[this.layer].usedBatteries)+" / "+formatWhole(tmp[this.layer].batteryLimit)):"" }],
-        "grid",
+        ['row',[["clickable", 11], ["bar", "Power"], ]],
     ],
     displayFormula() {
         let f = "B - 0.5";
         return f;
     },
+    displayFormulaData() {
+        let f = 't + t<sub>2</sup>'
+        if(player.b.powerData==false){}
+
+        let f2 = colorText('( ','#77bf5f')+colorText('( ','#bf8f8f')+"t<sub>2</sub> + RA<sub>p</sub>"+colorText(' ) × RB<sub>p</sub> × b','#bf8f8f')+colorText(' )<sup>RC<sub>p</sub></sup>','#77bf5f')
+        return [f,f2];
+    },
     calculateValue(B=player[this.layer].points) {
         let val = B.sub(0.5);
         return val;
     },
+    calculateValuePower() {
+        let val = player.b.time2.add(player.ro.valueAPower).mul(player.ro.valueBPower).mul(player.b.value).pow(player.ro.valueCPower)
+        return val;
+    },
     update(diff) {
         player[this.layer].value = tmp[this.layer].calculateValue
-    },
-    batteriesUnl() { return false },
-    batteryEffectTypes: {
-        101: "降低A能量和B能量的价格",
-        102: "基于A能量倍增B能量效果",
-        103: "降低进化要求",
-        201: "倍增 n(t) & B<sub>101</sub> 的效果",
-        202: "倍增 a(A) & B<sub>102</sub> 的效果",
-        203: "倍增 B<sub>103</sub> 的效果 & 让 &quot;绝对是蜜蜂玩笑&quot; 成就的效果更强",
-        301: "倍增A能量获取 & B<sub>201</sub> 的效果",
-        302: "倍增时间速率 & B<sub>202</sub> 的效果",
-        303: "减少进化要求底数 & 倍增 B<sub>203</sub> 的效果",
-    },
-    batteryLimit() { 
-        if (!tmp[this.layer].batteriesUnl) return 0;
+        player[this.layer].powerValue = tmp[this.layer].calculateValuePower
         
-        let limit = hasAchievement("goals", 34)?4:2 
-        if (hasAchievement("goals", 43)) limit++;
-        if (hasAchievement("goals", 53)) limit++;
-        if (hasAchievement("goals", 76)) limit += 3;
-        return limit;
+        if(player.b.powerData){
+            player.b.time2 = player.b.time2.add(n(1).mul(diff))
+        }
+        
+        if (tmp.goals.unlocks>=6) {
+            if(tmp[this.layer].bars.Power.progress>=1){
+                player[this.layer].power = player[this.layer].power.plus(1);
+            }
+        }
     },
-    usedBatteries() { return Object.values(player[this.layer].grid).filter(x => x.gt(0)).length },
-    batteryRowsWithRewards() {
-        let rows = 1
-        if (hasAchievement("goals", 45)) rows++;
-        if (hasAchievement("goals", 53)) rows++;
-        return rows;
-    },
-    grid: {
-        rows() { return 0 },
-        cols() { return 0 },
-        maxRows: 3,
-        maxCols: 3,
-
-        getStartData(id) {
-            return new Decimal(0)
-        },
-        getUnlocked(id) {
-            return tmp[this.layer].batteriesUnl;
-        },
-        getTitle(data, id) {
-            return "B<sub>"+id+"</sub>: "+(data.gt(0)?"开":"关")
-        },
-        getDisplay(data, id) {
-            let ed = (id<((tmp.b.batteryRowsWithRewards+1)*100))?tmp[this.layer].batteryEffectTypes[id]:("倍增 B<sub>"+(id-100)+"</sub>的效果")
-            let eff = gridEffect(this.layer, id);
-            let display = ed+" by "+format(eff);
-            return display;
-        },
-        getEffect(data, id) {
-            let row = Math.floor(id/100);
-            let col = id-row*100;
-            let mult = new Decimal(1);
-            if (row<tmp[this.layer].grid.rows) Array.from({length: tmp[this.layer].grid.rows}, (v, i) => i+1).filter(x => row<x).forEach(function(x) { mult = mult.times(gridEffect("b", x*100+col)) })
-            if (data===undefined) return new Decimal(mult)
-            let x = data.times(player[this.layer].points);
-            let rt = row*col/2;
-            let eff = x.plus(1).root(rt).times(mult);
-            if (col==1 && hasAchievement("goals", 76)) eff = eff.pow(2);
-            if (row==3 && hasAchievement("goals", 84)) eff = eff.times(2);
-            return eff;
-        },
-        getCanClick(data, id) { return (layers[this.layer].usedBatteries()<tmp[this.layer].batteryLimit)||data.gt(0) },
-        onClick(data, id) { 
-            player[this.layer].grid[id] = new Decimal(data.eq(0)?1:0);
-        },
-        getStyle(data, id) { return {
-            "background-color": data.gt(0)?tmp.b.color:"#9696ab",
-        }},
-    },
-    componentStyles: {
-        gridable: {
-            width: "120px",
-            "min-width": "120px",
-            height: "120px",
-            "border-radius": "5%",
+    bars: {
+        Power: {
+            direction: RIGHT,
+            width: 450,
+            height: 156,
+            req(){
+                return n(100).mul(n(1.35).pow(player.b.power.mul(0.1))).pow(player.b.power.div(200).add(1))
+            },
+            progress() {
+                return player.b.powerValue.div(tmp[this.layer].bars.Power.req)
+            },
+            unlocked() { return tmp.goals.unlocks>=2 },
+            display() {
+                return "要求: power(t<sub>2</sub>) ≥ "+format(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)<br><br>"
+                +"power("+format(player[this.layer].time2)+") = "+format(player[this.layer].powerValue)+"<br>"
+                +"t<sub>2</sub>("+format(player[this.layer].time2)+") = "+format(player[this.layer].time2)+"<br><br>"
+                +"power(t<sub>2</sub>) = "+tmp[this.layer].displayFormulaData[1]+"<br>"
+                +"t<sub>2</sub>(t) = "+tmp[this.layer].displayFormulaData[0]
+            },
+            displayEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)" },
+            fillStyle: {"background-color": "#4946ee"},
         },
     },
-    doReset(resettingLayer) {
-        let keep = ["grid"]
-        if (layers[resettingLayer].row > tmp[this.layer].row) layerDataReset(this.layer, keep)
+    clickables: {
+        11: {
+            display(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? '开' : '关')+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big>'},
+            canClick(){return true},
+            onClick(){
+                player.b.powerData ? player.b.powerData = false : player.b.powerData = true
+            },
+			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
+        },  
     },
     branches: ["a2"],
 })

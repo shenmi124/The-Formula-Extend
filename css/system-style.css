@@ -92,7 +92,7 @@ td {
 
 .hidden {
 	visibility: hidden;
-	height: 50px !important;
+	height: 90px !important;
 }
 
 .canvas {
@@ -210,7 +210,7 @@ ul {
 	pointer-events:auto;
 	position: absolute;
 	right: 15px;
-	top: 65px;
+	top: 125px;
 	background-color: transparent;
 }
 
