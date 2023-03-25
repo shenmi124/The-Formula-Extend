@@ -134,7 +134,7 @@ addLayer("b", {
             progress() {
                 return player.b.powerValue.div(tmp[this.layer].bars.Power.req)
             },
-            unlocked() { return tmp.goals.unlocks>=2 },
+            unlocked() { return tmp.goals.unlocks>=6 },
             display() {
                 return "要求: power(t<sub>2</sub>) ≥ "+format(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)<br><br>"
                 +"power("+format(player[this.layer].time2)+") = "+format(player[this.layer].powerValue)+"<br>"
@@ -153,6 +153,7 @@ addLayer("b", {
             onClick(){
                 player.b.powerData ? player.b.powerData = false : player.b.powerData = true
             },
+            unlocked() { return tmp.goals.unlocks>=6 },
 			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
         },  
     },
