@@ -223,7 +223,6 @@ addLayer("ro", {
             req(){
                 return n(tmp.ro.roReq)
             },
-            unlocked(){return tmp.ac.unlocks>=4},
             progress() {
                 return player.ro.points.sub(400).max(0).div(tmp[this.layer].bars.Ro5.req)
             },
