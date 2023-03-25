@@ -117,7 +117,7 @@ addLayer("ac", {
 			requirementDescription: "特权阶级3",
 			requirementDescriptionEN: "Perk Tier 3",
 			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量,B能量,转盘<br><br>转盘升级<br><br>你可以自动购买A能量<br>一次可以获得5级的进化<br>阿尔法能量不再消耗/重置A能量<br>>————————————————————————————————————————————————————————————————————————<",
-			effectDescriptionEN: ">————————————————————————————————————————————————————————————————————————<<br>>Fully Reset Goals,A-Power,Alpha Energy,B-Power,Wheel<br><br>Wheel Upgrade<br><br>Automate A-Power<br>Bulk buy 5 Avolve levels<br>Alpha Energy do not reset A-Power<br>>————————————————————————————————————————————————————————————————————————<",
+			effectDescriptionEN: ">————————————————————————————————————————————————————————————————————————<<br>>Fully Reset Goals,A-Power,Alpha Energy,B-Power,Wheel<br><br>Upgrade Wheel<br><br>Automate A-Power<br>Bulk buy 5 Avolve levels<br>Alpha Energy do not reset A-Power<br>>————————————————————————————————————————————————————————————————————————<",
 			done() {
 				return tmp.ac.unlocks>=3
 			},
@@ -127,7 +127,7 @@ addLayer("ac", {
 			requirementDescription: "特权阶级4",
 			requirementDescriptionEN: "Perk Tier 4",
 			effectDescription: ">————————————————————————————————————————————————————————————————————————<<br>完全重置成就,A能量,阿尔法能量,B能量,转盘<br><br>exp不再被β影响,持续β最大<br><br>一次可以获得50级的进化<br>自动购买进化<br>你可以最大购买B能量<br>>————————————————————————————————————————————————————————————————————————<",
-			effectDescriptionEN: ">————————————————————————————————————————————————————————————————————————<<br>>Fully Reset Goals,A-Power,Alpha Energy,B-Power,Wheel<br><br>Wheel Upgrade<br><br>Automate A-Power<br>Bulk buy 5 Avolve levels<br>Alpha Energy do not reset A-Power<br>>————————————————————————————————————————————————————————————————————————<",
+			effectDescriptionEN: ">————————————————————————————————————————————————————————————————————————<<br>>Fully Reset Goals,A-Power,Alpha Energy,B-Power,Wheel<br><br>Remove β from exp formula,β is always maxed<br><br>Bulk buy 50 Avolve levelsr<br>Automate Avolve Upgrade<br>You can buy max B-Power<br>>————————————————————————————————————————————————————————————————————————<",
 			done() {
 				return tmp.ac.unlocks>=4
 			},

@@ -42,7 +42,7 @@ addLayer("b", {
     resetsNothing() { return false },
     tooltip(){
         let g6 = player.b.power.gte(1) ? '<br><br>'+format(player[this.layer].power)+' B<sub>01</sub><br>( '+format(player[this.layer].powerValue)+' / '+format(tmp.b.bars.Power.req)+' )' : ''
-        return formatWhole(player.b.points)+' B能量'+g6
+        return formatWhole(player.b.points)+(options.ch?' B能量':" B-Power")+g6
     },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     tooltipLockedEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
@@ -82,7 +82,8 @@ addLayer("b", {
         "main-display",
         "prestige-button",
         ["display-text", function() {
-            return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" B能量之后,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" 
+            if(options.ch) return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" B能量之后,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" 
+            return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B-Power, each B-Power increases its requirement exponent by "+format(tmp[this.layer].costScalingInc)):"" 
         }],
         "blank",
         ["display-text", function() { return "<h3>b("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
@@ -142,18 +143,25 @@ addLayer("b", {
                 +"power(t<sub>2</sub>) = "+tmp[this.layer].displayFormulaData[1]+"<br>"
                 +"t<sub>2</sub>(t) = "+tmp[this.layer].displayFormulaData[0]
             },
-            displayEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)" },
+            displayEN() {
+                return "Req: power(t<sub>2</sub>) ≥ "+format(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)<br><br>"
+                +"power("+format(player[this.layer].time2)+") = "+format(player[this.layer].powerValue)+"<br>"
+                +"t<sub>2</sub>("+format(player[this.layer].time2)+") = "+format(player[this.layer].time2)+"<br><br>"
+                +"power(t<sub>2</sub>) = "+tmp[this.layer].displayFormulaData[1]+"<br>"
+                +"t<sub>2</sub>(t) = "+tmp[this.layer].displayFormulaData[0]
+            },
             fillStyle: {"background-color": "#4946ee"},
         },
     },
     clickables: {
         11: {
             display(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? '开' : '关')+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big>'},
+            displayEN(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? 'ON' : 'OFF')+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big>'},
             canClick(){return true},
+            unlocked() { return tmp.goals.unlocks>=6 },
             onClick(){
                 player.b.powerData ? player.b.powerData = false : player.b.powerData = true
             },
-            unlocked() { return tmp.goals.unlocks>=6 },
 			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
         },  
     },

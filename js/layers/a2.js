@@ -55,7 +55,7 @@ addLayer("a2", {
     },
     prestigeButtonTextEN() {
         let text = "Reset for "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> Alpha Energy<br><br>";
-        text += "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
+        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) ? 'You cannot get more Alpha Energy' : "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)

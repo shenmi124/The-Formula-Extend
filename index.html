@@ -38,7 +38,7 @@
 </head>
 
 
-<body onload="load();options.ch = `window.confirm('选择语言(英文版可能会有一些bug)\nChoose your language(there may be some bugs in English mode)\n选择是:中文  否:英文\nselect yes:Chinese  no:English')`;document.title = options.ch?'公式树NG--':'The Formula NG--'" onmousemove="updateMouse(event)">
+<body onload="load();options.ch = window.confirm('选择语言(英文版可能会有一些bug)\nChoose your language(there may be some bugs in English mode)\n选择是:中文  否:英文\nselect yes:Chinese  no:English');document.title = options.ch?'公式树NG--':'The Formula NG--'" onmousemove="updateMouse(event)">
 	<div id="app">
 		<canvas id="treeCanvas" class="canvas" v-if="!(tmp.gameEnded && !player.keepGoing)"></canvas>
 
