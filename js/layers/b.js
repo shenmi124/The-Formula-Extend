@@ -129,11 +129,14 @@ addLayer("b", {
             direction: RIGHT,
             width: 450,
             height: 156,
-            req(){
-                return n(100).mul(n(1.35).pow(player.b.power.mul(0.1))).pow(player.b.power.div(200).add(1))
+            req(x=player.b.power){
+                return n(100).mul(n(1.35).pow(x.mul(0.1))).pow(x.div(200).add(1))
+            },
+            lastReq(x=player.b.power.sub(1)){
+                return x.gte(1) ? n(100).mul(n(1.35).pow(x.mul(0.1))).pow(x.div(200).add(1)) : n(0)
             },
             progress() {
-                return player.b.powerValue.div(tmp[this.layer].bars.Power.req)
+                return player.b.powerValue.sub(tmp[this.layer].bars.Power.lastReq).div(n(tmp[this.layer].bars.Power.req).sub(tmp[this.layer].bars.Power.lastReq))
             },
             unlocked() { return tmp.goals.unlocks>=6 },
             display() {

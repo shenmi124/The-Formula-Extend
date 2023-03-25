@@ -385,8 +385,8 @@ addLayer("goals", {
             name: "我猜那个不再是没用的了...",
             nameEN: "I guess this isn't useless now...",
             done() { return player.b.power.gte(1) },
-            tooltip: "B<sub>01</sub> ≥ 1",
-            tooltipEN: "B<sub>01</sub> ≥ 1",
+            tooltip: "B<sub>01</sub> ≥ 1<br>提示: 关闭电池以获得RoA,RoB,RoC,而不是RoA<sub>p</sub>,RoB<sub>p</sub>,RoC<sub>p</sub>",
+            tooltipEN: "B<sub>01</sub> ≥ 1<br>Tip: Turn off the battery to get RoA,RoB,RoC.Not RoA<sub>p</sub>,RoB<sub>p</sub>,RoC<sub>p</sub>",
             unlocked() { return tmp.goals.unlocks>=6 },
         },
         63: {

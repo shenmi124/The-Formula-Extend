@@ -115,9 +115,9 @@ addLayer("a", {
             direction: RIGHT,
             width: 400,
             height: 20,
-            req(){
-                let pow2 = player.a.avolve.gte(500) ? player.a.avolve.sub(500).div(10000).add(1) : n(1)
-                return player.a.avolve.mul(4).pow(1.7).pow(pow2).div(tmp.a.buyables[11].effect).floor()
+            req(x=player.a.avolve){
+                let pow2 = player.a.avolve.gte(500) ? x.sub(500).div(10000).add(1) : n(1)
+                return x.mul(4).pow(1.7).pow(pow2).div(tmp.a.buyables[11].effect).floor()
             },
             progress() {
                 if(player.a.avolve.eq(0)){return n(1)}

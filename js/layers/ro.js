@@ -105,7 +105,7 @@ addLayer("ro", {
                 return (tmp.ro.roLevel>=2 ? '等级: 2<br>' : '')+'<br><big><big>'+tmp.ro.roRare+'<br><br>数量:'+tmp.ro.roNum+'</big><br><br>上次: '+tmp.ro.clickables[11].last+'</big>'
             },
             displayEN(){
-                return (tmp.ro.roLevel>=2 ? 'Level: 2<br>' : '')+'<br><big><big>'+tmp.ro.roRare+'<br><br>Amount:'+tmp.ro.roNum+'</big><br><br>上次: '+((tmp.ro.clickables[11].last==="无上次记录")?"No Result Yet":tmp.ro.clickables[11].last)+'</big>'
+                return (tmp.ro.roLevel>=2 ? 'Level: 2<br>' : '')+'<br><big><big>'+tmp.ro.roRare+'<br><br>Amount:'+tmp.ro.roNum+'</big><br><br>Last: '+((tmp.ro.clickables[11].last==="无上次记录")?"No Result Yet":tmp.ro.clickables[11].last)+'</big>'
             },
             last(){return player.ro.last},
 			canClick(){
