@@ -418,7 +418,7 @@ addLayer("goals", {
             nameEN: "Stucked at 50% to Absolution",
             done() { return player.value.gte(n("1.797e308").pow(0.5)) },
             tooltip: "让 n(t) ≥ "+format(n("1.797e308").pow(0.5)),
-            tooltip: "Make n(t) ≥ "+format(n("1.797e308").pow(0.5)),
+            tooltipEN: "Make n(t) ≥ "+format(n("1.797e308").pow(0.5)),
             unlocked() { return hasAchievement(this.layer, 65) }
         },
         71: {
