@@ -287,7 +287,7 @@ addLayer("ro", {
         "blank",
         ["display-text", function() {
             if(tmp.goals.unlocks>=6){
-                return "<h3>RA("+format(player[this.layer].a)+") | RA<sub></sub>("+format(player[this.layer].aPower)+") = "+format(player[this.layer].valueA)+" | "+format(player[this.layer].valueAPower)+"</h3>"
+                return "<h3>RA("+format(player[this.layer].a)+") | RA<sub>p</sub>("+format(player[this.layer].aPower)+") = "+format(player[this.layer].valueA)+" | "+format(player[this.layer].valueAPower)+"</h3>"
             }
             return "<h3>RA("+format(player[this.layer].a)+") = "+format(player[this.layer].valueA)+"</h3>"
         }],
@@ -295,7 +295,7 @@ addLayer("ro", {
         "blank",
         ["display-text", function() {
             if(tmp.goals.unlocks>=6){
-                return "<h3>RB("+format(player[this.layer].b)+") | RB<sub></sub>("+format(player[this.layer].bPower)+") = "+format(player[this.layer].valueB)+" | "+format(player[this.layer].valueBPower)+"</h3>"
+                return "<h3>RB("+format(player[this.layer].b)+") | RB<sub>p</sub>("+format(player[this.layer].bPower)+") = "+format(player[this.layer].valueB)+" | "+format(player[this.layer].valueBPower)+"</h3>"
             }
             return "<h3>RB("+format(player[this.layer].b)+") = "+format(player[this.layer].valueB)+"</h3>"
         }],
@@ -303,7 +303,7 @@ addLayer("ro", {
         "blank",
         ["display-text", function() {
             if(tmp.goals.unlocks>=6){
-                return "<h3>RC("+format(player[this.layer].c)+") | RC<sub></sub>("+format(player[this.layer].cPower)+") = "+format(player[this.layer].valueC)+" | "+format(player[this.layer].valueCPower)+"</h3>"
+                return "<h3>RC("+format(player[this.layer].c)+") | RC<sub>p</sub>("+format(player[this.layer].cPower)+") = "+format(player[this.layer].valueC)+" | "+format(player[this.layer].valueCPower)+"</h3>"
             }
             return tmp.ro.roLevel>=2 ? "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>" : ''
         }],
