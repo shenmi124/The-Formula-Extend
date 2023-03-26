@@ -134,7 +134,7 @@ addLayer("goals", {
             unlocked() { return true },
         },
         12: {
-            name: "快去解锁下个阶段吧(笑)",
+            name(){return tmp.co.unlocks>=1 ? "<s>快去解锁下个阶段吧(笑)</s>,但这次你真的可以去了" : "快去解锁下个阶段吧(笑)"},
             nameEN: "Unlock Next Feature Now!(lol)",
             done() { return player.value.gte(1) },
             tooltip: "让 n(t) ≥ 1",
@@ -180,7 +180,7 @@ addLayer("goals", {
         21: {
             name: "达尔文是错误的",
             nameEN: "Darwin had it wrong",
-            done() { return player.a.avolve.gte(2) },
+            done() { return player.a.avolve.add(player.a.avolve2).gte(2) },
             tooltip: "达到2级进化",
             tooltipEN: "Reach Avolve Level 2.",
             unlocked() { return tmp.goals.unlocks>=2 },
@@ -196,7 +196,7 @@ addLayer("goals", {
         23: {
             name: "达尔文又正确了",
             nameEN: "Darwin had it right(again)",
-            done() { return player.a.avolve.gte(12) },
+            done() { return player.a.avolve.add(player.a.avolve2).gte(12) },
             tooltip: "达到12级进化",
             tooltipEN: "Reach Avolve Level 12.",
             unlocked() { return hasAchievement(this.layer, 21) },
@@ -236,7 +236,7 @@ addLayer("goals", {
         32: {
             name: "更远的存在",
             nameEN: "Further Existence",
-            done() { return player.a.avolve.gte(30) },
+            done() { return player.a.avolve.add(player.a.avolve2).gte(30) },
             tooltip: "达到30级进化.",
             tooltipEN: "Reach Avolve Level 30.",
             unlocked() { return tmp.goals.unlocks>=2 },
@@ -408,9 +408,9 @@ addLayer("goals", {
         65: {
             name: "这是timewall吗?",
             nameEN: "Is this timewall?",
-            done() { return player.b.time2.gte(1200) },
-            tooltip: "t<sub>02</sub> ≥ 1200",
-            tooltipEN: "t<sub>02</sub> ≥ 1200",
+            done() { return player.b.time2.gte(900) },
+            tooltip: "t<sub>02</sub> ≥ 900",
+            tooltipEN: "t<sub>02</sub> ≥ 900",
             unlocked() { return hasAchievement(this.layer, 62) },
         },
         66: {
@@ -422,16 +422,16 @@ addLayer("goals", {
             unlocked() { return hasAchievement(this.layer, 65) }
         },
         71: {
-            name: "最leet的函数",
-            done() { return false },
-            tooltip: "让 n(t) ≥ "+format("1e1337")+'. 奖励: "绝对是蜜蜂笑话" 的奖励x3.6但衰减速度x2.',
-            unlocked() { return false },
+            name: "新社会",
+            done() { return tmp.co.unlocks>=1 },
+            tooltip: '到达压缩点数,一个全新的阶段!',
+            unlocked() { return tmp.co.unlocks>=1 },
         },
         72: {
-            name: "新社会",
-            done() { return false },
-            tooltip: "达到 8 IP. 奖励: IP 倍增时间速率.",
-            unlocked() { return false },
+            name: "真实二阶段",
+            done() { return player.superValue.gte(1.2) },
+            tooltip: "让 n<sub>s</sub>(t) ≥ 1.2",
+            unlocked() { return tmp.co.unlocks>=1 },
         },
         73: {
             name: "没有半点用的QoL.",

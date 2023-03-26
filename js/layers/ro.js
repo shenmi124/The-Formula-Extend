@@ -78,7 +78,7 @@ addLayer("ro", {
         return tmp.ro.roLevel>=2 ? '0.1 ~ 100' : '0.1 ~ 10'
     },
     roRare(){
-        return tmp.ro.roLevel>=2 ? 'RoA —— 75%<br>RoB —— 20%<br>RoC —— 5%' : 'RoA —— 95%<br>RoB —— 5%'
+        return tmp.ro.roLevel>=2 ? 'RoA —— 70%<br>RoB —— 22.5%<br>RoC —— 7.5%' : 'RoA —— 92.5%<br>RoB —— 7.5%'
     },
     update(diff) {
         player.ro.value = n(tmp.ro.calculateValue)
@@ -117,7 +117,7 @@ addLayer("ro", {
 
                 let a = (Math.random() * 100)
                 if(tmp.ro.roLevel>=2){
-                    if(a>=95){
+                    if(a>=92.5){
                         if(player.b.powerData){
                             player.ro.cPower = player.ro.cPower.add(num)
                         }else{
@@ -125,7 +125,7 @@ addLayer("ro", {
                         }
     
                         player.ro.last = 'RoC '+format(num)
-                    }else if(a>=75){
+                    }else if(a>=70){
                         if(player.b.powerData){
                             player.ro.bPower = player.ro.bPower.add(num)
                         }else{
@@ -143,7 +143,7 @@ addLayer("ro", {
                         player.ro.last = 'RoA '+format(num)
                     }
                 }else{
-                    if(a>=95){
+                    if(a>=92.5){
                         player.ro.b = player.ro.b.add(num)
 
                         player.ro.last = 'RoB '+format(num)
@@ -305,7 +305,7 @@ addLayer("ro", {
             if(tmp.goals.unlocks>=6){
                 return "<h3>RC("+format(player[this.layer].c)+") | RC<sub></sub>("+format(player[this.layer].cPower)+") = "+format(player[this.layer].valueC)+" | "+format(player[this.layer].valueCPower)+"</h3>"
             }
-            return "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>"
+            return tmp.ro.roLevel>=2 ? "<h3>RC("+format(player[this.layer].c)+") = "+format(player[this.layer].valueC)+"</h3>" : ''
         }],
         ["display-text", function() { return tmp.ro.roLevel>=2 ? (tmp.goals.unlocks>=6 ? 'RC | RC<sub>p</sub>' : 'RC')+"(RoC) = "+tmp[this.layer].displayFormula[3] : '' }],
     ],

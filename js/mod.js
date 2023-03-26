@@ -3,7 +3,7 @@ let modInfo = {
 	id: "formula_tree_game_NG--",
 	author: "Jacorb90 汉化by QwQe308 NG-- by 辉影神秘(Shinwmyste)",
 	pointsName: "时间",
-	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/ro.js", "layers/goals.js", "layers/ac.js", "layers/integration.js", "tree.js"],
+	modFiles: ["layers/a.js", "layers/a2.js", "layers/b.js", "layers/c.js", "layers/ro.js", "layers/goals.js", "layers/ac.js", "layers/co.js", "layers/integration.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -34,6 +34,10 @@ function displayFormula() {
 	let g3 = ''
 	let f3 = ''
 
+	let m2 = ''
+	if(tmp.co.unlocks>=1){
+		m2 = colorText(' × n<sub>s</sub><sup>0.5</sup>!','#77bf5f')
+	}
 
 	if(tmp.goals.unlocks>=1){
 		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × a, "+b2+colorText(' )<sup>exp</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
@@ -45,6 +49,7 @@ function displayFormula() {
 	}
 
 	f += m
+	f += m2
 	g3 += f
 	f = g3
 	f += f3
@@ -70,6 +75,11 @@ function displayIntFormula() {
 	let g3 = ''
 	let f3 = ''
 
+	let m2 = ''
+	if(tmp.co.unlocks>=1){
+		m2 = colorText(' × '+format(player.superValue)+'<sup>'+format(n(0.5))+'</sup>!','#77bf5f')
+	}
+
 	if(tmp.goals.unlocks>=1){
 		f = colorText('lg(','#77bf5f')+colorText(' Max( ','#bf8f8f')+b+" × "+format(player.a.value)+", "+format(b2)+colorText(' )<sup>'+format(player.a2.value)+'</sup> ','#bf8f8f')+colorText(' ) ×','#77bf5f')
 		m = colorText(' '+format(player.a2.valueBeta),'#77bf5f')
@@ -80,9 +90,20 @@ function displayIntFormula() {
 	}
 	
 	f += m
+	f += m2
 	g3 += f
 	f = g3
 	f += f3
+	return f;
+}
+
+function displayFormulaSuper() {
+	let f = 'lg( <a id="points">n</a> + 10 )'
+	return f;
+}
+
+function displayIntFormulaSuper() {
+	let f = 'lg( <a id="points">'+format(player.value)+'</a> + '+format(n(10))+' )'
 	return f;
 }
 
@@ -102,11 +123,19 @@ function calculateValue(t) {
 	if(tmp.goals.unlocks>=1){
 		f = n(b2).mul(player.a.value).max(b).pow(player.a2.value).log(10).mul(player.a2.valueBeta)
 	}
+	if(tmp.co.unlocks>=1){
+		f = f.mul(player.superValue.pow(0.5).factorial())
+	}
 	return f.pow(powG)
+}
+
+function calculateValueSuper(t) {
+	return t.add(10).log(10)
 }
 
 function updateValue() {
 	player.value = calculateValue(player.points.times(tmp.timeSpeed));
+	player.superValue = calculateValueSuper(player.value);
 }
 
 // Set your version in num and name
@@ -202,13 +231,19 @@ function gainPoints(diff) {
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 	value: new Decimal(0),
+	superValue: new Decimal(0),
+	superPoints: new Decimal(0),
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
-		if (tmp.timeSpeed.eq(1)) return '<br><br>n(t) = '+displayIntFormula()+' = '+format(player.value);
-		else return "timespeed = "+getTimeSpeedFormula()+'<br><br>n(t) = '+displayIntFormula()+' = '+format(player.value);
+		let f = tmp.co.unlocks>=1 ? '<br><br>n<sub>s</sub>(n) = '+displayIntFormulaSuper()+' = '+format(player.superValue) : '<br><br>n(t) = '+displayIntFormula()+' = '+format(player.value)
+		if(tmp.timeSpeed.eq(1)){
+			return f
+		}else{
+			return "timespeed = "+getTimeSpeedFormula()+f
+		}
 	}
 ]
 

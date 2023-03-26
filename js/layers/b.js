@@ -92,7 +92,7 @@ addLayer("b", {
         ['row',[["clickable", 11], ["bar", "Power"], ]],
     ],
     displayFormula() {
-        let f = "B - 0.5";
+        let f = "B - 0.5 + n<sub>s</sub><sup>0.35</sup>";
         return f;
     },
     displayFormulaData() {
@@ -103,7 +103,7 @@ addLayer("b", {
         return [f,f2];
     },
     calculateValue(B=player[this.layer].points) {
-        let val = B.sub(0.5);
+        let val = B.sub(0.5).add(player.superValue.pow(0.35))
         return val;
     },
     calculateValuePower() {
