@@ -20,7 +20,7 @@ function displayFormula() {
 	let b2 = '1'
 
 	let ro1 = '1'
-	if(player.ro.a.gte(1)){
+	if(player.ro.valueA.gte(1)){
 		ro1 = 'RA'
 	}
 
@@ -61,7 +61,7 @@ function displayIntFormula() {
 	let b2 = format(n(1))
 	
 	let ro1 = n(1)
-	if(player.ro.a.gte(1)){
+	if(player.ro.valueA.gte(1)){
 		ro1 = n(player.ro.valueA)
 	}
 
