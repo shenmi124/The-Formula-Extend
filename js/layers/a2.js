@@ -37,6 +37,8 @@ addLayer("a2", {
     type: "custom",
     tooltipLocked() { return "" },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
+    autoPrestige() { return tmp.ac.unlocks>=5 },
+    resetsNothing() { return tmp.ac.unlocks>=5 },
     getResetGain() {
         let amt = 0
         if(player.a.value.gte(player.a2.points.add(1))){amt = 1}
@@ -117,7 +119,7 @@ addLayer("a2", {
 			title:"-",
 			titleEN:"-",
 			canClick(){
-				return player.a2.beta.gt(0)
+				return player.a2.beta.gte(1)
 			},
 			onClick(){
                 player.a2.beta = player.a2.beta.sub(1)
@@ -130,7 +132,7 @@ addLayer("a2", {
 			title:"+",
 			titleEN:"+",
 			canClick(){
-				return player.a2.points.sub(player.a2.beta).gt(0)
+				return player.a2.points.sub(player.a2.beta).gte(1)
 			},
 			onClick(){
                 player.a2.beta = player.a2.beta.add(1)

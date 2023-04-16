@@ -1,8 +1,8 @@
 addLayer("b", {
     name: "B",
     symbol() {
-        let g6 = player.b.power.gte(1) && player.b.powerData==true ? ' power = '+format(player[this.layer].powerValue) : ''
-        return player[this.layer].unlocked? ("b = "+format(player[this.layer].value))+g6 : "B"
+        let g6 = player.b.power.gte(1) && player.b.powerData==true ? ' power = '+format(player[this.layer].powerValue) : "b = "+format(player[this.layer].value)
+        return player[this.layer].unlocked? g6 : "B"
     },
     position: 1,
     startData() { return {
@@ -24,7 +24,6 @@ addLayer("b", {
     requires() { return new Decimal(11000) },
     reqDiv() { 
         let div = new Decimal(1);
-        if (tmp[this.layer].batteriesUnl) div = div.times(gridEffect(this.layer, 101));
         return div;
     },
     base() {
@@ -41,7 +40,7 @@ addLayer("b", {
     autoPrestige() { return false },
     resetsNothing() { return false },
     tooltip(){
-        let g6 = player.b.power.gte(1) ? '<br><br>'+format(player[this.layer].power)+' B<sub>01</sub><br>( '+format(player[this.layer].powerValue)+' / '+format(tmp.b.bars.Power.req)+' )' : ''
+        let g6 = player.b.power.gte(1) ? '<br><br>'+format(player[this.layer].power)+' B<sub>01</sub><br><small>( '+format(player[this.layer].powerValue)+' / '+format(tmp.b.bars.Power.req)+' )</small>' : ''
         return formatWhole(player.b.points)+(options.ch?' B能量':" B-Power")+g6
     },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
@@ -92,24 +91,20 @@ addLayer("b", {
         ['row',[["clickable", 11], ["bar", "Power"], ]],
     ],
     displayFormula() {
-        let f = "B - 0.5";
-        if(tmp.co.unlocks>=1){
-            f += 'n<sub>s</sub><sup>0.35</sup>'
-        }
+        let f = "B - 0.5 + n<sub>s</sub><sup>0.35</sup>";
         return f;
     },
     displayFormulaData() {
         let f = 't + t<sub>2</sup>'
-        if(player.b.powerData==false){}
+        if(tmp.ac.unlocks>=5){
+            f = 't × 20 + t<sub>2</sup>'
+        }
 
         let f2 = colorText('( ','#77bf5f')+colorText('( ','#bf8f8f')+"t<sub>2</sub> + RA<sub>p</sub>"+colorText(' ) × RB<sub>p</sub> × b','#bf8f8f')+colorText(' )<sup>RC<sub>p</sub></sup>','#77bf5f')
         return [f,f2];
     },
     calculateValue(B=player[this.layer].points) {
-        let val = B.sub(0.5)
-        if(tmp.co.unlocks>=1){
-            val = val.add(player.superValue.pow(0.35))
-        }
+        let val = B.sub(0.5).add(player.superValue.pow(0.35))
         return val;
     },
     calculateValuePower() {
@@ -121,7 +116,11 @@ addLayer("b", {
         player[this.layer].powerValue = tmp[this.layer].calculateValuePower
         
         if(player.b.powerData){
-            player.b.time2 = player.b.time2.add(n(1).mul(diff))
+            let t = n(1)
+            if(tmp.ac.unlocks>=5){
+                t = t.mul(20)
+            }
+            player.b.time2 = player.b.time2.add(n(t).mul(diff))
         }
         
         if (tmp.goals.unlocks>=6) {

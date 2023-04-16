@@ -117,16 +117,16 @@ var systemComponents = {
 			<br>
 		</span>
 		<br>
-		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks<=0">n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2>
+		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks<=0 && options.ch !== undefined">n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2>
 
-		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1">n<sub>s</sub>({{format(player.value)}}) = {{format(player.superValue)}}</h2>
-		<h3 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1"><br>n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h3>
+		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1 && options.ch !== undefined">n<sub>s</sub>({{format(player.value)}}) = {{format(player.superValue)}}</h2>
+		<h3 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1 && options.ch !== undefined"><br>n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h3>
 
 		<br>
 
-		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks<=0">n(t) = <span v-html="displayFormula()"></span></span>
+		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks<=0 && options.ch !== undefined">n(t) = <span v-html="displayFormula()"></span></span>
 		
-		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks>=1">n<sub>s</sub>(n) = <span v-html="displayFormulaSuper()"></span></span>
+		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks>=1 && options.ch !== undefined">n<sub>s</sub>(n) = <span v-html="displayFormulaSuper()"></span></span>
 		<br>
 		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
 	</div>
@@ -136,12 +136,12 @@ var systemComponents = {
     'info-tab': {
         template: `
         <div>
-        <h2>{{modInfo.name}}</h2>
+        <h2>{{options.ch?modInfo.name:modInfo.nameEN}}</h2>
         <br>
         <h3>{{VERSION.withName}}</h3>
         <span v-if="modInfo.author">
             <br>
-            Made by {{modInfo.author}}	
+            {{options.ch?'制作者: '+modInfo.author : 'Authors: '+modInfo.authorEN}}	
         </span>
         <br>
         The Modding Tree <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >{{TMT_VERSION.tmtNum}}</a> by Acamaeda
@@ -151,11 +151,10 @@ var systemComponents = {
 		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
         <span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
         <a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
-        <a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
+        <a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br><br>
+        <a class="link" href="https://afdian.net/@Mysterious124" target="_blank" v-bind:style="{'font-size': '16px'}">Shinwmyste Game Discord</a><br>
 		<br><br>
         Time Played: {{ formatTime(player.timePlayed) }}<br><br>
-        <h3>Hotkeys</h3><br>
-        <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>{{key.description}}</span></div>
     `
     },
 
@@ -164,7 +163,7 @@ var systemComponents = {
         <table>
             <tr>
 				<td><button class="opt" onclick="save()">{{options.ch?'本地存档' :'Save'}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('autosave')">{{options.ch?'自动存档' :'AutoSave'}}: {{ options.offlineProd?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('autosave')">{{options.ch?'自动存档' :'AutoSave'}}: {{ options.autosave?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
                 <td><button class="opt" onclick="hardReset()">{{options.ch?'硬重置(删除存档)' :'HardReset'}}</button></td>
 			</tr>
 			<tr>
@@ -183,7 +182,11 @@ var systemComponents = {
 			</tr> 
 			<br>
 			<tr>
-				<td><button class="opt" onclick="options.ch = !options.ch; needsCanvasUpdate = true">{{options.ch?'语言':'Language'}}: {{ options.ch?"中文(Chinese)":"英文(English)" }}</button></td>
+				<td><button class="opt" onclick="
+                options.ch = !options.ch;
+                needsCanvasUpdate = true; document.title = options.ch?'公式树NG--':'The Formula NG--';
+                VERSION.withName = VERSION.withoutName + (VERSION.name ? ': ' + (options.ch? VERSION.name :VERSION.nameEN) : '')
+                ">{{options.ch?'语言':'Language'}}: {{ options.ch?"中文(Chinese)":"英文(English)" }}</button></td>
 			</tr>
         </table>`
     },

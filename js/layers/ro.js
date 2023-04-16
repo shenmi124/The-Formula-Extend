@@ -36,6 +36,9 @@ addLayer("ro", {
     },
     displayFormula(){
         let f = 'b / 2'
+        if(tmp.ac.unlocks>=5){
+            f = '( b / 2 )<sup>1 / '+colorText(' Max( ','#bf8f8f')+(options.ch?'( 转盘能量 - 转盘能量上限 ) / 400, 1 ':'( Wheel Energy - Wheel Energy Cap ) / 400, 1 ')+colorText(' ) ','#bf8f8f')+'</sup>'
+        }
 
         let f2 = 'RoA<sup>0.75</sup> + 1'
 
@@ -46,7 +49,10 @@ addLayer("ro", {
         return [f,f2,f3,f4]
     },
     calculateValue(val=player.b.value) {
-        val=val.div(2)
+        val = val.div(2)
+        if(tmp.ac.unlocks>=5){
+            val = val.pow(n(1).div(player.ro.points.sub(n(tmp.ac.unlocks>=4 ? 7 : 5).mul(100)).mul(0.0025).max(1)))
+        }
 
         return val;
     },
@@ -92,7 +98,11 @@ addLayer("ro", {
         player.ro.valueCPower = n(tmp.ro.calculateValueRoPower[2])
 
         if(tmp.goals.unlocks>=5){
-            player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(tmp.ac.unlocks>=4 ? 7 : 5)).max(0)
+            if(tmp.ac.unlocks>=5){
+                player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).max(0)
+            }else{
+                player.ro.points = player.ro.points.add(n(player.ro.value).mul(diff)).min(n(tmp.ro.roReq).mul(tmp.ac.unlocks>=4 ? 7 : 5)).max(0)
+            }
         }else{
             player.ro.points = n(0)
         }

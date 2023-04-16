@@ -38,7 +38,7 @@
 </head>
 
 
-<body onload="load();options.ch = window.confirm('选择语言(英文版可能会有一些bug)\nChoose your language(there may be some bugs in English mode)\n选择是:中文  否:英文\nselect yes:Chinese  no:English');document.title = options.ch?'公式树NG--':'The Formula NG--'" onmousemove="updateMouse(event)">
+<body onload="load();document.title = options.ch?'公式树NG--':'The Formula NG--';VERSION.withName = VERSION.withoutName + (VERSION.name ? ': ' + (options.ch? VERSION.name :VERSION.nameEN) : '')" onmousemove="updateMouse(event)">
 	<div id="app">
 		<canvas id="treeCanvas" class="canvas" v-if="!(tmp.gameEnded && !player.keepGoing)"></canvas>
 
@@ -56,12 +56,9 @@
 			<button class="longUpg can" onclick="hardReset(true)">Play Again</button>&nbsp;&nbsp;&nbsp;&nbsp;<button
 				class="longUpg can" onclick="keepGoing()">Keep Going</button>
 			<br><br><br>
-			<span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink"
-					target="_blank">{{modInfo.discordName}}</a><br></span>
-			<a class="link" href="https://discord.gg/F3xveHV" target="_blank"
-				v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
-			<a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main
-				Prestige Tree server</a><br>
+			<span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
+			<a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
+			<a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
 			<br><br>
 		</div>
 
@@ -82,13 +79,10 @@
 				<img onclick="window.open((modInfo.discordLink ? modInfo.discordLink : 'https://discord.gg/F3xveHV'),'mywindow')"
 					src="discord.png" target="_blank"></img>
 				<ul id="discord-links">
-					<li v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink"
-							target="_blank">{{modInfo.discordName}}</a><br></li>
-					<li><a class="link" href="https://discord.gg/F3xveHV" target="_blank"
-							v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree
-							Discord</a><br></li>
-					<li><a class="link" href="http://discord.gg/wwQfgPa" target="_blank"
-							v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a></li>
+					<li v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></li>
+					<li><a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br></li>
+					<li><a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br></li>
+					<li><a class="link" href="https://discord.gg/DdWRz6cJ" target="_blank" v-bind:style="{'font-size': '16px'}">Shinwmyste Game Discord</a><br></li>
 				</ul>
 			</div>
 			<overlay-head v-if="!(tmp.gameEnded && !player.keepGoing)"></overlay-head>

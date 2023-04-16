@@ -61,12 +61,13 @@ addLayer("a", {
         return text
     },
     row: 0,
-    layerShown(){return true},
+    layerShown(){return options.ch !== undefined},
 	doReset(resettingLayer) {
 		if (layers[resettingLayer].row > layers[this.layer].row) {
 			let keep = []
 			if (resettingLayer=="a2" && tmp.ac.unlocks>=1) keep.push("buyables",'avolve','avolve2');
 			if (resettingLayer=="a2" && tmp.ac.unlocks>=3) keep.push("points");
+			if (resettingLayer=="b" && tmp.ac.unlocks>=5) keep.push("points",'avolve','avolve2');
 			layerDataReset(this.layer, keep)
 		}
 		player.a.fire = new Decimal(100)
@@ -97,6 +98,9 @@ addLayer("a", {
 
         if (tmp.goals.unlocks>=2) {
             if(tmp[this.layer].bars.Avolve.progress>=1){
+                if(tmp.ac.unlocks>=5){
+                    player[this.layer].avolve = player[this.layer].avolve.plus(50);
+                }
                 if(tmp.ac.unlocks>=4){
                     player[this.layer].avolve = player[this.layer].avolve.plus(45);
                 }
@@ -109,6 +113,9 @@ addLayer("a", {
 
         if (tmp.goals.unlocks>=2 && tmp.co.unlocks>=1) {
             if(tmp[this.layer].bars.Avolve2.progress>=1){
+                if(tmp.ac.unlocks>=5){
+                    player[this.layer].avolve2 = player[this.layer].avolve2.plus(50);
+                }
                 if(tmp.ac.unlocks>=4){
                     player[this.layer].avolve2 = player[this.layer].avolve2.plus(45);
                 }
@@ -154,7 +161,7 @@ addLayer("a", {
             },
             unlocked() { return tmp.goals.unlocks>=2 && tmp.co.unlocks>=1 },
             display() { return "要求: n<sub>s</sub>(n) ≥ "+format(tmp[this.layer].bars.Avolve2.req)+" ("+format(100-tmp[this.layer].bars.Avolve2.progress)+"%)" },
-            displayEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve2.req)+" ("+format(100-tmp[this.layer].bars.Avolve2.progress)+"%)" },
+            displayEN() { return "Req: n<sub>s</sub>(n) ≥ "+formatWhole(tmp[this.layer].bars.Avolve2.req)+" ("+format(100-tmp[this.layer].bars.Avolve2.progress)+"%)" },
             fillStyle: {"background-color": "#ba2323"},
         },
     },
@@ -202,7 +209,7 @@ addLayer("a", {
         ["display-text", function() { return tmp.goals.unlocks>=2 ? "<h3>Avolve("+formatWhole(player[this.layer].avolve.add(player[this.layer].avolve2))+") = "+format(player[this.layer].valueA)+"</h3>" : ''}],
         ["display-text", function() { return tmp.goals.unlocks>=2 ? (options.ch?"Avolve(进化等级) = ":"Avolve(level) = ")+tmp[this.layer].displayFormula[1] : ''}],
         "blank", "blank",
-        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?((options.ch?"<h4>进化等级: ":"Avolve Level: ")+formatWhole(player[this.layer].avolve.add(player[this.layer].avolve2))+"</h4>"):"" }],
+        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?((options.ch?"<h4>进化等级: ":"Avolve Level: ")+formatWhole(player[this.layer].avolve.add(player[this.layer].avolve2))+"</h4>")+(tmp.co.unlocks>=1 ? ' ( '+format(player.a.avolve)+' + '+format(player.a.avolve2)+' )' : ''):"" }],
         ["bar", "Avolve"], ["bar", "Avolve2"], "blank",
         ["buyable", 11],
     ],
