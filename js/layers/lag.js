@@ -21,14 +21,14 @@ addLayer("lag", {
             titleEN(){return '中文(Chinese)'},
             canClick(){return true},
 			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
-            onClick(){options.ch=true;showTab('a')}
+            onClick(){options.ch=true;showTab('none')}
         },  
         12: {
             title(){return 'English(英文)'},
             titleEN(){return 'English(英文)'},
             canClick(){return true},
 			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
-            onClick(){options.ch=false;showTab('a')}
+            onClick(){options.ch=false;showTab('none')}
         },  
     },
 })
