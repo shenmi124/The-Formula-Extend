@@ -140,7 +140,7 @@ addLayer("a", {
                 return x.mul(4).pow(1.7).pow(pow2).div(tmp.a.buyables[11].effect).floor()
             },
             progress() {
-                if(player.a.avolve.eq(0)){return n(1)}
+                if(tmp[this.layer].bars.Avolve.req.lte(0)){return n(1)}
                 return player.value.div(tmp[this.layer].bars.Avolve.req)
             },
             unlocked() { return tmp.goals.unlocks>=2 },
@@ -156,7 +156,7 @@ addLayer("a", {
                 return x.mul(0.01).add(1).pow(x.sub(10).max(0).mul(0.075).add(1)).div(tmp.a.buyables[11].effect)
             },
             progress() {
-                if(player.a.avolve2.eq(0)){return n(1)}
+                if(tmp[this.layer].bars.Avolve2.req.lte(0)){return n(1)}
                 return player.superValue.div(tmp[this.layer].bars.Avolve2.req)
             },
             unlocked() { return tmp.goals.unlocks>=2 && tmp.co.unlocks>=1 },
