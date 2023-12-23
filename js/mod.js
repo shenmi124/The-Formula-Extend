@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "集合公式",
-	nameEN: "The Set Formula",
+	name: "公式树 - 扩展",
+	nameEN: "The Formula Extended",
 	id: "formula_tree_game_NG--",
 	author: "shinwmyste",
 	pointsName: "time",
