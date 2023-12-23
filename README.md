@@ -10,7 +10,6 @@ The game is based on [The Modding Table](https://github.com/shenmi124/The-Moddin
 [The Modding Table](https://github.com/shenmi124/The-Modding-Table): [Shinwmste](https://github.com/shenmi124) (← It's me)<br>
 [The Modding Tree](https://github.com/Acamaeda/The-Modding-Tree): [Acamaeda](https://github.com/Acamaeda)<br>
 <br>
-<br>
 (Main Helper)
 <br>
 [QwQe308](https://github.com/QwQe308)
