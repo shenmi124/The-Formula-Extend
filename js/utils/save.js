@@ -197,7 +197,7 @@ function load() {
 		loadOptions();
 	}
 
-	if (player.offlineProd) {
+	if (options.offlineProd) {
 		if (player.offTime === undefined)
 			player.offTime = { remain: 0 };
 		player.offTime.remain += (Date.now() - player.time) / 1000;
@@ -214,6 +214,31 @@ function load() {
 	updateTemp();
 	updateTabFormats()
 	loadVue();
+
+	if(modInfo.otherLanguageMod===true && player.Language.sure===false){
+		options.ch = undefined
+	}else if(modInfo.otherLanguageMod===false){
+		options.ch = undefined
+	}
+
+	if(modInfo.otherLanguageMod){
+		modInfo.languageMod = undefined
+	}
+
+	if(modInfo.otherLanguageMod===true && options.ch===undefined){
+		showTab('Language')
+	}else{
+		getActiveClass(player.tab)
+	}
+
+	if(modInfo.forceOneTab==true){
+		options.forceOneTab = true
+		showTab('tree-tab')
+	}else{
+		options.forceOneTab = false
+	}
+
+	mouseSetting()
 }
 
 function loadOptions() {
@@ -223,12 +248,13 @@ function loadOptions() {
 	else 
 		options = getStartOptions()
 	if (themes.indexOf(options.theme) < 0) theme = "default"
+	fixData(options, getStartOptions())
 
 }
 
 function setupModInfo() {
-	modInfo.changelog = changelog;
-	modInfo.winText = winText ? winText : `Congratulations! You have reached the end and beaten this game, but for now...`;
+	modInfo.changelog = changelog();
+	modInfo.winText = winText();
 
 }
 function fixNaNs() {

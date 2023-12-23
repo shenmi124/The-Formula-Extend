@@ -47,7 +47,7 @@ function format(decimal, precision = 2, small) {
         player.hasNaN = true;
         return "NaN"
     }
-    if (decimal.sign < 0) return "-" + format(decimal.neg(), precision)
+    if (decimal.sign < 0) return "-" + format(decimal.neg(), precision, small)
     if (decimal.mag == Number.POSITIVE_INFINITY) return "Infinity"
     if (decimal.gte("eeee1000")) {
         var slog = decimal.slog()
@@ -72,12 +72,11 @@ function format(decimal, precision = 2, small) {
 
 }
 
-function formatWhole(decimal, ez=false) {
+function formatWhole(decimal) {
     decimal = new Decimal(decimal)
     if (decimal.gte(1e9)) return format(decimal, 2)
     if (decimal.lte(0.99) && !decimal.eq(0)) return format(decimal, 2)
-    let f = format(decimal, 0)
-    return ((ez&&f.length<2)?("0".repeat(2-f.length)):"")+f
+    return format(decimal, 0)
 }
 
 function formatTime(s) {

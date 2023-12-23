@@ -1,12 +1,11 @@
 addLayer("b", {
     name: "B",
     symbol() {
-        let g6 = player.b.power.gte(1) && player.b.powerData==true ? ' power = '+format(player[this.layer].powerValue) : "b = "+format(player[this.layer].value)
-        return player[this.layer].unlocked? g6 : "B"
+        return options.ch ? 'B能量' : 'B-Power'
     },
     position: 1,
     startData() { return {
-        unlocked: false,
+        unlocked: true,
 		points: new Decimal(0),
         value: new Decimal(0),
         time2: new Decimal(0),
@@ -14,8 +13,7 @@ addLayer("b", {
         powerValue: new Decimal(0),
         powerData: false,
     }},
-    nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
-    color: "#4946ee",
+    color: "#68a4f1",
     resource: "B能量", 
     resourceEN: "B-Power", 
     baseResource: "n", 
@@ -35,20 +33,19 @@ addLayer("b", {
         return new Decimal(exp);
     },
     costScalingStart: new Decimal(15),
-    costScalingInc() { return new Decimal(0.0317) },
+    costScalingInc() { return new Decimal(0.0317).sub(player.meta.buyables[32].gte(10) ? player.meta.buyables[32].mul(0.001) : n(0)).max(0) },
     canBuyMax() { return tmp.ac.unlocks>=4 },
-    autoPrestige() { return false },
-    resetsNothing() { return false },
+    autoPrestige() { return player.meta.buyables[23].gte(32) },
+    resetsNothing() { return player.meta.buyables[23].gte(32) },
     tooltip(){
-        let g6 = player.b.power.gte(1) ? '<br><br>'+format(player[this.layer].power)+' B<sub>01</sub><br><small>( '+format(player[this.layer].powerValue)+' / '+format(tmp.b.bars.Power.req)+' )</small>' : ''
-        return formatWhole(player.b.points)+(options.ch?' B能量':" B-Power")+g6
+        return false
     },
     tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     tooltipLockedEN() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
         let gain = tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).div(tmp[this.layer].requires).max(1).log(tmp[this.layer].base).root(tmp[this.layer].exponent)
-        if (gain.gte(tmp[this.layer].costScalingStart)) gain = gain.pow(tmp[this.layer].exponent).log(tmp[this.layer].costScalingStart).sub(tmp[this.layer].exponent).div(tmp[this.layer].costScalingInc).plus(tmp[this.layer].costScalingStart).plus(1).floor().sub(player[this.layer].points).max(0)
+        if (gain.gte(tmp[this.layer].costScalingStart) && tmp[this.layer].costScalingInc.gt(0)) gain = gain.pow(tmp[this.layer].exponent).log(tmp[this.layer].costScalingStart).sub(tmp[this.layer].exponent).div(tmp[this.layer].costScalingInc).plus(tmp[this.layer].costScalingStart).plus(1).floor().sub(player[this.layer].points).max(0)
         else gain = gain.plus(1).floor().sub(player[this.layer].points).max(0)
         if (!tmp[this.layer].canBuyMax) gain = gain.min(1);
         if (tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).lt(tmp[this.layer].requires)) return new Decimal(0);
@@ -78,33 +75,43 @@ addLayer("b", {
     row: 2,
     layerShown() { return tmp.goals.unlocks>=4 },
     tabFormat: [
+        ["display-text", function() { return getPointsDisplay() }],
         "main-display",
         "prestige-button",
         ["display-text", function() {
-            if(options.ch) return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" B能量之后,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" 
-            return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B-Power, each B-Power increases its requirement exponent by "+format(tmp[this.layer].costScalingInc)):"" 
+            if(options.ch) return (player[this.layer].points.gte(tmp[this.layer].costScalingStart) && (tmp[this.layer].costScalingInc).gt(0))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" B能量之后,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" 
+            return (player[this.layer].points.gte(tmp[this.layer].costScalingStart) && (tmp[this.layer].costScalingInc).gt(0))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B-Power, each B-Power increases its requirement exponent by "+format(tmp[this.layer].costScalingInc)):"" 
         }],
         "blank",
         ["display-text", function() { return "<h3>b("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "b(B) = "+tmp[this.layer].displayFormula }],
         "blank", "blank",
         ['row',[["clickable", 11], ["bar", "Power"], ]],
+        "blank","blank",
+        ["display-text", function() {
+            let a = ''
+            if(player.b.power.gt(0)){a += options.ch?'关闭电池以获得RoA,RoB,RoC而不是RoA<sub>p</sub>,RoB<sub>p</sub>,RoC<sub>p</sub><br>'
+        :'Turn off to gain RoA,RoB,RoC instead of RoA<sub>p</sub>,RoB<sub>p</sub>,RoC<sub>p</sub><br>'}
+            return '<i style="color:#aaa">'+a+'</i>'
+        }],
     ],
     displayFormula() {
-        let f = "B - 0.5 + n<sub>s</sub><sup>0.35</sup>";
+        let p = tmp.ac.unlocks>=6 ? '<sup>2</sup>' : ''
+        let f = "B"+p+" - 0.5 + n<sub>s</sub><sup>0.35</sup>";
         return f;
     },
     displayFormulaData() {
-        let f = 't + t<sub>2</sup>'
+        let f = '1'
         if(tmp.ac.unlocks>=5){
-            f = 't × 20 + t<sub>2</sup>'
+            f = '20'
         }
 
-        let f2 = colorText('( ','#77bf5f')+colorText('( ','#bf8f8f')+"t<sub>2</sub> + RA<sub>p</sub>"+colorText(' ) × RB<sub>p</sub> × b','#bf8f8f')+colorText(' )<sup>RC<sub>p</sub></sup>','#77bf5f')
+        let f2 = colorText('( ',1)+'( t<sub>2</sub> + RA<sub>p</sub> ) × RB<sub>p</sub> × b'+colorText(' )<sup>RC<sub>p</sub></sup>',1)
         return [f,f2];
     },
     calculateValue(B=player[this.layer].points) {
-        let val = B.sub(0.5).add(player.superValue.pow(0.35))
+        let p = tmp.ac.unlocks>=6 ? n(2) : n(1)
+        let val = B.pow(p).sub(0.5).add(player.superValue.pow(0.35))
         return val;
     },
     calculateValuePower() {
@@ -149,22 +156,21 @@ addLayer("b", {
                 +"power("+format(player[this.layer].time2)+") = "+format(player[this.layer].powerValue)+"<br>"
                 +"t<sub>2</sub>("+format(player[this.layer].time2)+") = "+format(player[this.layer].time2)+"<br><br>"
                 +"power(t<sub>2</sub>) = "+tmp[this.layer].displayFormulaData[1]+"<br>"
-                +"t<sub>2</sub>(t) = "+tmp[this.layer].displayFormulaData[0]
+                +'<i style="color:#aaa">t<sub>2</sub>\'(t) = '+tmp[this.layer].displayFormulaData[0]+ ' (如果打开电池)</i>'
             },
             displayEN() {
                 return "Req: power(t<sub>2</sub>) ≥ "+format(tmp[this.layer].bars.Power.req)+" ("+format(100-tmp[this.layer].bars.Power.progress)+"%)<br><br>"
                 +"power("+format(player[this.layer].time2)+") = "+format(player[this.layer].powerValue)+"<br>"
                 +"t<sub>2</sub>("+format(player[this.layer].time2)+") = "+format(player[this.layer].time2)+"<br><br>"
                 +"power(t<sub>2</sub>) = "+tmp[this.layer].displayFormulaData[1]+"<br>"
-                +"t<sub>2</sub>(t) = "+tmp[this.layer].displayFormulaData[0]
+                +'<i style="color:#aaa">t<sub>2</sub>\'(t) = '+tmp[this.layer].displayFormulaData[0]+ ' (if on)</i>'
             },
-            fillStyle: {"background-color": "#4946ee"},
+            fillStyle: {"background-color": "#68a4f1"},
         },
     },
     clickables: {
         11: {
-            display(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? '开' : '关')+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big>'},
-            displayEN(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? 'ON' : 'OFF')+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big>'},
+            display(){return '<big><big><big>B<sub>01</sub>: '+(player.b.powerData ? (options.ch?'开':"ON") : (options.ch?'关':"OFF"))+'</big></big><br>B<sub>01</sub> = '+formatWhole(player.b.power)+'</big><div style="height: 4px"></div>'},
             canClick(){return true},
             unlocked() { return tmp.goals.unlocks>=6 },
             onClick(){
@@ -173,5 +179,4 @@ addLayer("b", {
 			style() {return {'width': "160px", "min-width": "160px", 'height': "160px", "border-radius": "5%", "margin-right": "20px",}},
         },  
     },
-    branches: ["a2"],
 })

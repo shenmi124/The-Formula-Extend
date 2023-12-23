@@ -1,13 +1,17 @@
 * {
-	transition-duration: 0.5s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
+	font-family: "Inconsolata", 'Noto Sans SC', cursive, monospace;
 	font-weight: bold;
 	table-align: center;
 	margin: auto;
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
+	user-select: none;
+}
 
+h1, h2, h3, b, input, .pesterlog > * > * {
+	display: inline;
+	font-family: "Courier New", "Courier Prime", "Lucida Console",'Noto Sans SC', monospace;
 }
 
 *:focus {
@@ -65,13 +69,15 @@ td {
 
 .back {
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: -4px;
+	left: 8px;
 	background-color: transparent;
 	border: 1px solid transparent;
 	color: var(--color);
 	font-size: 40px;
 	cursor: pointer;
+	transition: 0.4s;
+	font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
 
 .other-back {
@@ -118,10 +124,29 @@ td {
 }
 
 .col {
-	min-width: 49.5%;
-	max-width: 49.5%;
-	width: 49.5%;
+	width: var(--tabWidth);
 	height: 100%;
+	min-height: 100%;
+	column-span: 1;
+	position: absolute;
+	overflow-y: auto;
+	overflow-x: hidden;
+	transition-duration: 0s
+}
+
+.col::-webkit-scrollbar {
+    width: 6px;
+}
+
+.col::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(180, 180, 180);
+}
+
+.col2 {
+	width: calc(100% - var(--tabWidth));
+	height: 100%;
+	left: var(--tabWidth);
 	min-height: 100%;
 	column-span: 1;
 	position: absolute;
@@ -131,7 +156,8 @@ td {
 }
 
 .instant {
-	transition-duration: 0s !important
+	transition-duration: 0s !important;
+	z-index: -1;
 }
 
 .fast {

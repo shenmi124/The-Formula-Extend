@@ -1,0 +1,41 @@
+.metaClick {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    cursor: default;
+    width: 130px;
+    height: 130px;
+    border-radius: 0px;
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(177, 177, 177);
+    color: rgb(88, 88, 88);
+}
+
+.metaClick:hover {
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    background-color: #000;
+    border-color: rgb(255, 255, 255);
+}
+
+.metaName {
+    font-size: 12px;
+    line-height: 12px;
+	font-family: Georgia, serif;
+}
+
+.metaTooltip {
+    font-size: 12px;
+    line-height: 12px;
+	font-family: Georgia, serif;
+}
+
+.metaSup {
+	font-family: Georgia, serif;
+}
+
+.metaSup.first {
+    font-size: normal;
+    font-size: 12px;
+	font-family: Georgia, serif;
+}

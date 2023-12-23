@@ -53,7 +53,7 @@ function buyUpgrade(layer, id) {
 function buyUpg(layer, id) {
 	if (!tmp[layer].upgrades || !tmp[layer].upgrades[id]) return
 	let upg = tmp[layer].upgrades[id]
-	if (!player[layer].unlocked) return
+	if (!player[layer].unlocked || player[layer].deactivated) return
 	if (!tmp[layer].upgrades[id].unlocked) return
 	if (player[layer].upgrades.includes(id)) return
 	if (upg.canAfford === false) return
@@ -219,12 +219,12 @@ function notifyLayer(name) {
 }
 
 function subtabShouldNotify(layer, family, id) {
-	let subtab = {}
-	if (family == "mainTabs") subtab = tmp[layer].tabFormat[id]
-	else subtab = tmp[layer].microtabs[family][id]
-
-	if (subtab.embedLayer) return tmp[subtab.embedLayer].notify
-	else return subtab.shouldNotify
+    let subtab = {}
+    if (family == "mainTabs") subtab = tmp[layer].tabFormat[id]
+    else subtab = tmp[layer].microtabs[family][id]
+	if (!subtab.unlocked) return false
+    if (subtab.embedLayer) return tmp[subtab.embedLayer].notify
+    else return subtab.shouldNotify
 }
 
 function subtabResetNotify(layer, family, id) {
@@ -256,22 +256,24 @@ function toNumber(x) {
 }
 
 function updateMilestones(layer) {
+	if (tmp[layer].deactivated) return
 	for (id in layers[layer].milestones) {
 		if (!(hasMilestone(layer, id)) && layers[layer].milestones[id].done()) {
 			player[layer].milestones.push(id)
 			if (layers[layer].milestones[id].onComplete) layers[layer].milestones[id].onComplete()
-			if (tmp[layer].milestonePopups || tmp[layer].milestonePopups === undefined) doPopup("milestone", options.ch ? tmp[layer].milestones[id].requirementDescription : tmp[layer].milestones[id].requirementDescriptionEN, "Milestone Gotten!", 3, tmp[layer].color);
+			if (tmp[layer].milestonePopups || tmp[layer].milestonePopups === undefined) doPopup("milestone", tmp[layer].milestones[id].requirementDescription, options.ch?"获得里程碑!" : "Milestone Gotten!", 3, tmp[layer].color);
 			player[layer].lastMilestone = id
 		}
 	}
 }
 
 function updateAchievements(layer) {
+	if (tmp[layer].deactivated) return
 	for (id in layers[layer].achievements) {
-		if (isPlainObject(layers[layer].achievements[id]) && !(hasAchievement(layer, id)) && layers[layer].achievements[id].done() && tmp[layer].achievements[id].unlocked) {
+		if (isPlainObject(layers[layer].achievements[id]) && !(hasAchievement(layer, id)) && layers[layer].achievements[id].done()) {
 			player[layer].achievements.push(id)
 			if (layers[layer].achievements[id].onComplete) layers[layer].achievements[id].onComplete()
-			if (tmp[layer].achievementPopups || tmp[layer].achievementPopups === undefined) doPopup("achievement", options.ch ? tmp[layer].achievements[id].name : tmp[layer].achievements[id].nameEN, "Achievement Gotten!", 3, tmp[layer].color);
+			if (tmp[layer].achievementPopups || tmp[layer].achievementPopups === undefined) doPopup("achievement", tmp[layer].achievements[id].name, options.ch?"获得成就!" : "Achievement Gotten!", 3, tmp[layer].color);
 		}
 	}
 }
@@ -286,10 +288,10 @@ function addTime(diff, layer) {
 
 	//I am not that good to perfectly fix that leak. ~ DB Aarex
 	if (time + 0 !== time) {
-		console.log("Memory leak detected. Trying to fix...")
+		console.log(options.ch?"检测到内存缺失. 尝试修复中..." : "Memory leak detected. Trying to fix...")
 		time = toNumber(time)
 		if (isNaN(time) || time == 0) {
-			console.log("Couldn't fix! Resetting...")
+			console.log(options.ch?"修复失败! 重置中..." : "Couldn't fix! Resetting...")
 			time = layer ? player.timePlayed : 0
 			if (!layer) player.timePlayedReset = true
 		}
@@ -344,7 +346,7 @@ document.title = modInfo.name
 function toValue(value, oldValue) {
 	if (oldValue instanceof Decimal) {
 		value = new Decimal (value)
-		if (value.eq(decimalNaN)) return decimalZero
+		if (checkDecimalNaN(value)) return decimalZero
 		return value
 	}
 	if (!isNaN(oldValue)) 

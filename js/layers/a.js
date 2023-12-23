@@ -1,6 +1,6 @@
 addLayer("a", {
     name: "A",
-    symbol() { return player[this.layer].unlocked?("a = "+format(player[this.layer].value)):"A" },
+    symbol() { return options.ch ? 'A能量' : 'A-Power' },
     position: 0,
     startData() { return {
         unlocked: false,
@@ -11,7 +11,6 @@ addLayer("a", {
         avolve2: new Decimal(0),
     }},
     milestonePopups: false,
-    nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#eb3434",
     resource: "A能量",
     resourceEN: "A-Power",
@@ -32,10 +31,10 @@ addLayer("a", {
         let base = new Decimal(1.5);
         return base;
     },
-    canBuyMax() { return false },
+    canBuyMax() { return tmp.ac.unlocks>=6 },
     resetsNothing() { return tmp.ac.unlocks>=2 },
     autoPrestige() { return tmp.ac.unlocks>=3 },
-    tooltipLocked() { return "" },
+    tooltip() { return false },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
         let gain = tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).sub(tmp[this.layer].requires).plus(1).max(1).log(tmp[this.layer].base).times(tmp[this.layer].gainMult).plus(1).floor().sub(player[this.layer].points).max(0)
@@ -61,7 +60,6 @@ addLayer("a", {
         return text
     },
     row: 0,
-    layerShown(){return options.ch !== undefined},
 	doReset(resettingLayer) {
 		if (layers[resettingLayer].row > layers[this.layer].row) {
 			let keep = []
@@ -70,7 +68,6 @@ addLayer("a", {
 			if (resettingLayer=="b" && tmp.ac.unlocks>=5) keep.push("points",'avolve','avolve2');
 			layerDataReset(this.layer, keep)
 		}
-		player.a.fire = new Decimal(100)
 	},
     displayFormula() {
         let f = "A<sup>0.85<sup>";
@@ -79,8 +76,8 @@ addLayer("a", {
         if(player.ro.b.gt(0)){po = "<sup> + RB</sup>"}
         f += po
 
-        let f2 = '进化等级 × 0.005'
-        if(!options.ch)  f2 = 'level × 0.005'
+        let f2 = '进化等级 × 0.0075'
+        if(!options.ch)  f2 = 'level × 0.0075'
         return [f,f2];
     }, 
     calculateValue(A=player[this.layer].points) {
@@ -89,7 +86,7 @@ addLayer("a", {
         return val;
     },
     calculateValueA(A=player[this.layer].avolve.add(player[this.layer].avolve2)) {
-        let val = A.mul(0.005);
+        let val = A.mul(0.0075);
         return val;
     },
     update(diff) {
@@ -199,6 +196,7 @@ addLayer("a", {
         },  
     },
     tabFormat: [
+        ["display-text", function() { return getPointsDisplay() }],
         "main-display",
         "prestige-button",
         "milestones",

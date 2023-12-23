@@ -3,8 +3,9 @@ var needCanvasUpdate = true;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.6.4.3",
-	tmtName: "Fixed Reality"
+	tmtNum: "2.6.6.2",
+	tmtName: "Fixed Reality",
+	newtmtNum: "3.0.2.11",
 }
 
 function getResetGain(layer, useType = null) {
@@ -94,7 +95,8 @@ function shouldNotify(layer){
 	if (isPlainObject(tmp[layer].tabFormat)) {
 		for (subtab in tmp[layer].tabFormat){
 			if (subtabShouldNotify(layer, 'mainTabs', subtab)) {
-				tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor
+				tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor || defaultGlow
+
 				return true
 			}
 		}
@@ -203,7 +205,6 @@ function doReset(layer, force=false) {
 					if (!player[lrs[lr]].unlocked) player[lrs[lr]].unlockOrder++
 			}
 		}
-	
 	}
 
 	if (run(layers[layer].resetsNothing, layers[layer])) return
@@ -215,7 +216,6 @@ function doReset(layer, force=false) {
 	}
 
 	player.points = (row == 0 ? decimalZero : getStartPoints())
-	updateValue()
 
 	for (let x = row; x >= 0; x--) rowReset(x, layer)
 	for (r in OTHER_LAYERS){
@@ -246,7 +246,7 @@ function resetRow(row) {
 
 function startChallenge(layer, x) {
 	let enter = false
-	if (!player[layer].unlocked) return
+	if (!player[layer].unlocked || !tmp[layer].challenges[x].unlocked) return
 	if (player[layer].activeChallenge == x) {
 		completeChallenge(layer, x)
 		Vue.set(player[layer], "activeChallenge", null)
@@ -337,8 +337,7 @@ function gameLoop(diff) {
 			diff = limit
 	}
 	addTime(diff)
-	gainPoints(diff)
-	updateValue()
+	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 
 	for (let x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
@@ -409,7 +408,7 @@ var interval = setInterval(function() {
 			player.offTime.remain -= offlineDiff
 			diff += offlineDiff
 		}
-		if (!player.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
+		if (!options.offlineProd || player.offTime.remain <= 0) player.offTime = undefined
 	}
 	if (player.devSpeed) diff *= player.devSpeed
 	player.time = now

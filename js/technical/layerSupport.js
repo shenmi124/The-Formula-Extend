@@ -4,6 +4,9 @@ const decimalZero = new Decimal(0)
 const decimalOne = new Decimal(1)
 const decimalNaN = new Decimal(NaN)
 
+const defaultGlow = "#ff0000"
+
+
 function layerShown(layer){
     return tmp[layer].layerShown;
 }
@@ -182,12 +185,12 @@ function setupLayer(layer){
     if(layers[layer].directMult === undefined) layers[layer].directMult = decimalOne
     if(layers[layer].type === undefined) layers[layer].type = "none"
     if(layers[layer].base === undefined || layers[layer].base <= 1) layers[layer].base = 2
-    if(layers[layer].softcap === undefined) layers[layer].softcap = new Decimal(1/0)
-    if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new Decimal(0)
+    if(layers[layer].softcap === undefined) layers[layer].softcap = new Decimal("e1e7")
+    if(layers[layer].softcapPower === undefined) layers[layer].softcapPower = new Decimal("0.5")
     if(layers[layer].displayRow === undefined) layers[layer].displayRow = layers[layer].row
     if(layers[layer].name === undefined) layers[layer].name = layer
     if(layers[layer].layerShown === undefined) layers[layer].layerShown = true
-    if(layers[layer].glowColor === undefined) layers[layer].glowColor = "#ff0000"
+    if(layers[layer].glowColor === undefined) layers[layer].glowColor = defaultGlow
 
     let row = layers[layer].row
 
@@ -286,6 +289,6 @@ addLayer("options-tab", {
 })
 
 addLayer("changelog-tab", {
-    tabFormat() {return ([["raw-html", options.ch?changelog:changelogEN]])},
+    tabFormat() {return ([["raw-html", modInfo.changelog]])},
     row: "otherside"
 })

@@ -1,22 +1,11 @@
+function getAutoA2GainTimer(){
+    return n(0.05)
+}
+
 addLayer("a2", {
     name: "α",
     symbol() {
-        if(tmp.ac.unlocks>=4){
-            if(player.a2.gamma.gte(1)){
-                return "α/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].gamma,0)
-            }
-            if(player[this.layer].unlocked){
-                return "α = "+format(player[this.layer].points,0)
-            }
-        }else{
-            if(player.a2.gamma.gte(1)){
-                return "α/β/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)+'/'+format(player[this.layer].gamma,0)
-            }
-            if(player[this.layer].unlocked){
-                return "α/β = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)
-            }
-        }
-        return "α"
+        return options.ch ? '阿尔法能量' : 'Alpha Energy'
     },
     position: 0,
     startData() { return {
@@ -27,32 +16,52 @@ addLayer("a2", {
         valueBeta: new Decimal(0),
         gamma: n(0),
         valueGamma: new Decimal(0),
+
+        //tmpValues
+        autoGainTimer:n(0)
     }},
-    nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
-    color: "#f8a9ba",
+    color: "rgb(255,198,210)",
     resource: "阿尔法能量", 
     resourceEN: "Alpha Energy", 
     baseResource: "n", 
     baseAmount() {return player.a.value}, 
     type: "custom",
-    tooltipLocked() { return "" },
+    tooltip(){ return false },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     autoPrestige() { return tmp.ac.unlocks>=5 },
     resetsNothing() { return tmp.ac.unlocks>=5 },
     getResetGain() {
         let amt = 0
-        if(player.a.value.gte(player.a2.points.add(1))){amt = 1}
-        if(tmp.ac.unlocks>=2){amt = player.a.value.sub(player.a2.points).max(0).floor().min(n(300).sub(player.a2.points))}
-
-        return new Decimal(amt)
+        if(tmp.ac.unlocks>=6 && player.a2.points.gte(300)){
+            if(player.a.value.gte(tmp[this.layer].getNextAt)){
+                player.a2.autoGainTimer = player.a2.autoGainTimer.add(0)
+                let p = tmp.co.unlocks>=1 && tmp.ac.unlocks>=6 && player.a2.points.gte(400) ? player.co.effectO : n(1)/*!注意一下 p的公式也挪到这里了!*/
+                let maxAmt = player.a.value.root(p).log(10).add(299).sub(player.a2.points).max(0).floor()
+                let timeAmt = player.a2.autoGainTimer.div(getAutoA2GainTimer()).floor()
+                player.a2.autoGainTimer = player.a2.autoGainTimer.sub(getAutoA2GainTimer().mul(timeAmt))
+                return maxAmt.min(timeAmt)
+            }else{
+                return n(0)
+            }
+        }else{
+            if(player.a.value.gte(player.a2.points.add(1))){amt = 1}
+            if(tmp.ac.unlocks>=2){amt = player.a.value.sub(player.a2.points).max(0).floor().min(n(300).sub(player.a2.points))}
+    
+            return new Decimal(amt)
+        }
     },
     getNextAt() {
+        let p = tmp.co.unlocks>=1 && tmp.ac.unlocks>=6 && player.a2.points.gte(400) ? player.co.effectO : n(1)
+
+        if(tmp.ac.unlocks>=6 && player.a2.points.gte(300)){return n(10).pow(player.a2.points.sub(299)).pow(p).max(0).floor()}
+
         if(tmp.ac.unlocks>=2){return player.a.value.sub(player.a2.points).max(0).floor().add(player.a2.points).add(1)}
+
         return player.a2.points.add(1)
     },
     prestigeButtonText() {
         let text = "重置以获得 "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> 阿尔法能量<br><br>";
-        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) ? '您无法获得更多阿尔法能量' : "需求: a(A) ≥ "+format(tmp[this.layer].getNextAt)
+        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) && tmp.ac.unlocks<=5 ? '您无法获得更多阿尔法能量' : "需求: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
     prestigeButtonTextEN() {
@@ -60,7 +69,7 @@ addLayer("a2", {
         text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) ? 'You cannot get more Alpha Energy' : "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
-    row: 1, // Row the layer is in on the tree (0 is the first row)
+    row: 1,
     layerShown(){return tmp.goals.unlocks>=1},
     displayFormula() {
         let f = "α - β + 1";
@@ -68,14 +77,15 @@ addLayer("a2", {
             f = "α + 1";
         }
 
-        let f2 = colorText('( ','#bf8f8f')+' β + 1 '+colorText(' )<sup>α / 20 + 0.7</sup','#bf8f8f')
+        let f2 = '(  β + 1  )<sup>α / 20 + 0.7</sup'
 
         let f3 = '1 - α × 0.24'
-        if(tmp.ac.unlocks>=1){f3 = colorText('Max( ','#bf8f8f')+'1 - α × 0.24, 0.02'+colorText(' ) ','#bf8f8f')}
+        if(tmp.ac.unlocks>=1){f3 = colorText('Max( ',1)+'1 - α × 0.24, 0.04'+colorText(' ) ',1)}
+        if(tmp.ac.unlocks>=6){f3 = '| 1 - α × 0.24 |'}
 
         let roc = player.ro.c.gt(0) ? '<sup>RC</sup>' : ''
         let g6 = tmp.goals.unlocks>=6 ? ' + B<sub>01</sub> / 222.22' : ''
-        let fg = colorText('γ'+roc+' × 0.2 × (','#77bf5f')+colorText(' Max( ','#bf8f8f')+'γ'+roc+', 1'+colorText(' ) / ( ','#bf8f8f')+' 2 + γ '+colorText(' ) ','#bf8f8f')+' '+colorText(') + 1'+g6,'#77bf5f')
+        let fg = colorText('γ'+roc+' × 0.2 × (',1)+' Max( '+maxText([player.a2.gamma.pow(player.ro.valueC),1], 'max', ['γ'+roc,'1'])+' ) / (  2 + γ  ) '+colorText(') + 1'+g6,1)
         
         return [f, f2, f3, fg];
     },
@@ -111,13 +121,14 @@ addLayer("a2", {
         }
     },
     timespeedBoost(){
+        if(tmp.ac.unlocks>=6){return n(1).sub(player.a2.points.mul(0.24)).abs()}
         if(tmp.ac.unlocks>=1){return n(1).sub(player.a2.points.mul(0.24)).max(0.02)}
         return n(1).sub(player.a2.points.mul(0.24))
     },
 	clickables: {
 		11: {
-			title:"-",
-			titleEN:"-",
+			display:"<h2>-</h2>",
+			displayEN:"<h2>-</h2>",
 			canClick(){
 				return player.a2.beta.gte(1)
 			},
@@ -129,8 +140,8 @@ addLayer("a2", {
             unlocked(){return tmp.ac.unlocks<=3},
 		},
 		12: {
-			title:"+",
-			titleEN:"+",
+			display:"<h2>+</h2>",
+			displayEN:"<h2>+</h2>",
 			canClick(){
 				return player.a2.points.sub(player.a2.beta).gte(1)
 			},
@@ -143,16 +154,17 @@ addLayer("a2", {
 		},
 	},
     tabFormat: [
+        ["display-text", function() { return getPointsDisplay() }],
         "main-display",
         "prestige-button",
         "blank",
         "blank",
         ["display-text", function() {
             if(player.a2.gamma.gte(1)){
-                return "<h3>α/β/γ = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)+'/'+format(player[this.layer].gamma,0)+'</h3>'
+                return "<h3>α ‖ β ‖ γ = "+format(player[this.layer].points,0)+' ‖ '+format(player[this.layer].beta,0)+' ‖ '+format(player[this.layer].gamma,0)+'</h3>'
             }
             if(player[this.layer].unlocked){
-                return "<h3>α/β = "+format(player[this.layer].points,0)+'/'+format(player[this.layer].beta,0)+'</h3>'
+                return "<h3>α ‖ β = "+format(player[this.layer].points,0)+' ‖ '+format(player[this.layer].beta,0)+'</h3>'
             }
         }],,
         "blank",
@@ -170,7 +182,14 @@ addLayer("a2", {
         "blank",
         "blank",
         "blank",
-        'clickables'
+        'clickables',
+        "blank",
+        ["display-text", function() {
+            let a = ''
+            if(player.a2.gamma.gt(0)){a += options.ch?'γ数量同等于进化要求除数等级<br>'
+            :'γ is equal to Avolve Divisor Upgrade level<br>'}
+            return '<i style="color:#aaa">'+a+'</i>'
+        }],
     ],
     componentStyles: {
         buyable: {
@@ -183,5 +202,4 @@ addLayer("a2", {
             "z-index": "0",
         },
     },
-    branches: ["a"],
 })

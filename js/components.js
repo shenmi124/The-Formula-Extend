@@ -119,7 +119,6 @@ function loadVue() {
 			<div class="instant" v-bind:style="data ? {'height': data} : {}" class="vl2"></div>
 		`
 	})
-
 	Vue.component('challenges', {
 		props: ['layer', 'data'],
 		template: `
@@ -138,22 +137,23 @@ function loadVue() {
 		props: ['layer', 'data'],
 		template: `
 		<div v-if="tmp[layer].challenges && tmp[layer].challenges[data]!== undefined && tmp[layer].challenges[data].unlocked && !(options.hideChallenges && maxedChallenge(layer, [data]) && !inChallenge(layer, [data]))"
-			v-bind:class="['challenge', challengeStyle(layer, data), inChallenge(layer, data) ? 'resetNotify' : '']" v-bind:style="tmp[layer].challenges[data].style">
-			<br><h3 v-html="options.ch?tmp[layer].challenges[data].name:tmp[layer].challenges[data].nameEN"></h3><br>
-			<button v-bind:class="{ longUpg: true, can: true, [layer]: true }" v-bind:style="{'background-color': tmp[layer].color}" v-on:click="startChallenge(layer, data)">{{challengeButtonText(layer, data)}}</button><br>
+			v-bind:class="['challenge', challengeStyle(layer, data), player[layer].activeChallenge === data ? 'resetNotify' : '']" v-bind:style="tmp[layer].challenges[data].style">
+			<br><h3 v-html="(options.ch || modInfo.languageMod==false)?tmp[layer].challenges[data].name:tmp[layer].challenges[data].nameEN"></h3><br><br>
+			<button v-bind:class="{ longUpg: true, can: true, [layer]: true }" v-bind:style="{'background-color': tmp[layer].color}" v-on:click="startChallenge(layer, data)">{{challengeButtonText(layer, data)}}</button><br><br>
 			<span v-if="layers[layer].challenges[data].fullDisplay" v-html="run(layers[layer].challenges[data].fullDisplay, layers[layer].challenges[data])"></span>
 			<span v-else>
-				<span v-if="options.ch" v-html="tmp[layer].challenges[data].challengeDescription"></span>
+				<span v-if="(options.ch || modInfo.languageMod==false)" v-html="tmp[layer].challenges[data].challengeDescription"></span>
 				<span v-else v-html="tmp[layer].challenges[data].challengeDescriptionEN"></span>
-				<br>
-				{{options.ch?'目标':'Goal'}}:  <span v-if="tmp[layer].challenges[data].goalDescription && options.ch" v-html="tmp[layer].challenges[data].goalDescription"></span><span v-if="tmp[layer].challenges[data].goalDescription && !options.ch" v-html="tmp[layer].challenges[data].goalDescriptionEN"></span><br>
-				{{options.ch?'奖励':'Reward'}}: <span v-if="options.ch" v-html="tmp[layer].challenges[data].rewardDescription"></span><span v-else v-html="tmp[layer].challenges[data].rewardDescriptionEN"></span><br>
-				<span v-if="layers[layer].challenges[data].rewardDisplay!==undefined">{{options.ch?'当前奖励':'Current reward'}}: <span v-if="options.ch" v-html="(tmp[layer].challenges[data].rewardDisplay) ? (run(layers[layer].challenges[data].rewardDisplay, layers[layer].challenges[data])) : format(tmp[layer].challenges[data].rewardEffect)"></span><span v-else v-html="(tmp[layer].challenges[data].rewardDisplayEN) ? (run(layers[layer].challenges[data].rewardDisplayEN, layers[layer].challenges[data])) : format(tmp[layer].challenges[data].rewardEffectEN)"></span></span>
+				{{(options.ch || modInfo.languageMod==false)?'目标':'Goal'}}:  <span v-if="tmp[layer].challenges[data].goalDescription" v-html="tmp[layer].challenges[data].goalDescription"></span><span v-else>{{format(tmp[layer].challenges[data].goal)}} {{tmp[layer].challenges[data].currencyDisplayName ? tmp[layer].challenges[data].currencyDisplayName : modInfo.pointsName}}</span><br>
+				{{(options.ch || modInfo.languageMod==false)?'奖励':'Reward'}}: <span v-html="(options.ch || modInfo.languageMod==false)?tmp[layer].challenges[data].rewardDescription:tmp[layer].challenges[data].rewardDescriptionEN"></span><br>
+				<span v-if="layers[layer].challenges[data].rewardDisplay!==undefined">{{(options.ch || modInfo.languageMod==false)?'当前效果':'Currently'}}: <span v-html="(tmp[layer].challenges[data].rewardDisplay) ? (run(layers[layer].challenges[data].rewardDisplay, layers[layer].challenges[data])) : format(tmp[layer].challenges[data].rewardEffect)"></span></span>
 			</span>
 			<node-mark :layer='layer' :data='tmp[layer].challenges[data].marked' :offset="20" :scale="1.5"></node-mark></span>
+
 		</div>
 		`
 	})
+
 
 	Vue.component('upgrades', {
 		props: ['layer', 'data'],
@@ -273,7 +273,7 @@ function loadVue() {
 		props: ['layer', 'data', 'size'],
 		template: `
 		<div v-if="tmp[layer].buyables && tmp[layer].buyables[data]!== undefined && tmp[layer].buyables[data].unlocked" style="display: grid">
-			<button v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canAfford, bought: player[layer].buyables[data].gte(tmp[layer].buyables[data].purchaseLimit)}"
+			<button v-bind:class="{ buyable: true, tooltipBox: true, can: tmp[layer].buyables[data].canBuy, locked: !tmp[layer].buyables[data].canAfford, bought: player[layer].buyables[data].gte(tmp[layer].buyables[data].purchaseLimit)}"
 			v-bind:style="[tmp[layer].buyables[data].canBuy ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
 			v-on:click="buyBuyable(layer, data)" @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 				<span v-if= "tmp[layer].buyables[data].title"><h2 v-html="options.ch?tmp[layer].buyables[data].title:tmp[layer].buyables[data].titleEN"></h2><br></span>
@@ -294,7 +294,7 @@ function loadVue() {
 						if(this.time >= 5)
 							buyBuyable(this.layer, this.data)
 						this.time = this.time+1
-					}).bind(this), 50)}
+					}).bind(this), 20)}
 			},
 			stop() {
 				clearInterval(this.interval)
@@ -331,20 +331,21 @@ function loadVue() {
 
 	// data = id of clickable
 	Vue.component('clickable', {
-		props: ['layer', 'data', 'size'],
-		template:`
-		<button 
+		props: ['layer', 'data'],
+		template: `
+		<div 
 			v-if="tmp[layer].clickables && tmp[layer].clickables[data]!== undefined && tmp[layer].clickables[data].unlocked" 
-			v-bind:class="{ upg: true, can: tmp[layer].clickables[data].canClick, locked: !tmp[layer].clickables[data].canClick}"
-			v-bind:style="[tmp[layer].clickables[data].canClick ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
-			v-on:click="clickClickable(layer, data)"  @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
-			<span v-if= "tmp[layer].clickables[data].title"><h2 v-html="options.ch?tmp[layer].clickables[data].title:tmp[layer].clickables[data].titleEN"></h2><br></span>
-			<span v-bind:style="{'white-space': 'pre-line'}" v-html="run(options.ch?layers[layer].clickables[data].display:layers[layer].clickables[data].displayEN, layers[layer].clickables[data])"></span>
+			v-bind:class="{ upg: true, tooltipBox: true, can: tmp[layer].clickables[data].canClick, locked: !tmp[layer].clickables[data].canClick, metaClick: tmp[layer].clickables[data].metaClick}"
+			v-bind:style="[tmp[layer].clickables[data].canClick ? {'background-color': tmp[layer].color} : {}, tmp[layer].clickables[data].style]"
+			v-on:click="if(!interval) clickClickable(layer, data)" :id='"clickable-" + layer + "-" + data' @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
+			<span v-if= "tmp[layer].clickables[data].title"><h2 v-html="tmp[layer].clickables[data].title"></h2><br></span>
+			<span v-bind:style="{'white-space': 'pre-line'}" v-html="run(layers[layer].clickables[data].display, layers[layer].clickables[data])"></span>
 			<node-mark :layer='layer' :data='tmp[layer].clickables[data].marked'></node-mark>
-            <tooltip v-if="tmp[layer].clickables[data].tooltip" :text="options.ch?tmp[layer].clickables[data].tooltip:tmp[layer].clickables[data].tooltipEN"></tooltip>
-		</button>
+			<tooltip v-if="tmp[layer].clickables[data].tooltip" :text="tmp[layer].clickables[data].tooltip"></tooltip>
+
+		</div>
 		`,
-		data() { return { interval: false, time: 0,}},			
+		data() { return { interval: false, time: 0,}},
 		methods: {
 			start() {
 				if (!this.interval && layers[this.layer].clickables[this.data].onHold) {
@@ -354,7 +355,7 @@ function loadVue() {
 							run(c.onHold, c)
 						}	
 						this.time = this.time+1
-					}).bind(this), 50)}
+					}).bind(this), 25)}
 			},
 			stop() {
 				clearInterval(this.interval)
@@ -432,9 +433,11 @@ function loadVue() {
 			currentTab() {return player.subtabs[layer][data]}
 		},
 		template: `
-		<div v-if="tmp[layer].microtabs" :style="{'border-style': 'solid'}">
+		<div v-if="tmp[layer].microtabs" :style="">
 			<div class="upgTable instant">
 				<tab-buttons :layer="layer" :data="tmp[layer].microtabs[data]" :name="data" v-bind:style="tmp[layer].componentStyles['tab-buttons']"></tab-buttons>
+				<div class="vl3"/>
+				<div class="vlBlock"/>
 			</div>
 			<layer-tab v-if="tmp[layer].microtabs[data][player.subtabs[layer][data]].embedLayer" :layer="tmp[layer].microtabs[data][player.subtabs[layer][data]].embedLayer" :embedded="true"></layer-tab>
 
@@ -499,14 +502,12 @@ function loadVue() {
 			key() {return this.$vnode.key}
 		},
 		template: `<div>
-		<span class="upgRow" v-for="(row, r) in data"><table>
+		<span class="upgRow" v-for="(row, r) in data" style="margin-top: -4px;"><table class='untable'>
 			<span v-for="(node, id) in row" style = "{width: 0px}">
 				<tree-node :layer='node' :prev='layer' :abb='tmp[node].symbol' :key="key + '-' + r + '-' + id"></tree-node>
 			</span>
-			<tr><table><button class="treeNode hidden"></button></table></tr>
 		</span></div>
-
-	`
+		`
 	})
 
 	// Data is an array with the structure of the tree
@@ -658,8 +659,8 @@ function loadVue() {
 			gridRun,
 			displayFormula,
 			displayIntFormula,
+			
+            getPointsDisplay
 		},
 	})
 }
-
- 

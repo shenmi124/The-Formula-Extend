@@ -1,13 +1,32 @@
+function getActiveClass(layer){
+	if(layer=='info-tab'){layer = 'Information'}
+	if(layer=='options-tab'){layer = 'Setting'}
+	if(layer=='changelog-tab'){layer = 'Changelog'}
+	$("button").removeClass("active");
+	$('#'+layer).addClass('active')
+}
+
 var systemComponents = {
 	'tab-buttons': {
 		props: ['layer', 'data', 'name'],
 		template: `
 			<div class="upgRow">
 				<div v-for="tab in Object.keys(data)">
-					<button v-if="data[tab].unlocked == undefined || data[tab].unlocked" v-bind:class="{tabButton: true, notify: subtabShouldNotify(layer, name, tab), resetNotify: subtabResetNotify(layer, name, tab)}"
+					<button v-if="data[tab].unlocked == undefined || data[tab].unlocked"
+					v-bind:class="{
+						tabButton: true,
+						notify: subtabShouldNotify(layer, name, tab),
+						resetNotify: subtabResetNotify(layer, name, tab),
+						AcSub: tab==player.subtabs[layer][name]
+					}"
+					:class=""
+					v-bind:id="[tab]"
 					v-bind:style="[{'border-color': tmp[layer].color}, (data[tab].glowColor && subtabShouldNotify(layer, name, tab) ? {'box-shadow': 'var(--hqProperty2a), 0 0 20px '  + data[tab].glowColor} : {}), tmp[layer].componentStyles['tab-button'], data[tab].buttonStyle]"
-						v-on:click="function(){player.subtabs[layer][name] = tab; updateTabFormats(); needCanvasUpdate = true;}">{{tab}}</button>
-				</div>
+					v-on:click="function(){
+						player.subtabs[layer][name] = tab
+						updateTabFormats()
+						needCanvasUpdate = true
+					}">{{tab}}</button>
 			</div>
 		`
 	},
@@ -15,9 +34,24 @@ var systemComponents = {
 	'tree-node': {
 		props: ['layer', 'abb', 'size', 'prev'],
 		template: `
-		<button v-if="nodeShown(layer)"
+		<button v-if="nodeShown(layer) && ((options.ch!==undefined && modInfo.otherLanguageMod==true) || modInfo.otherLanguageMod==false)"
 			v-bind:id="layer"
 			v-on:click="function() {
+				if(layer=='Information'){
+					showTab('info-tab')
+					getActiveClass('Information')
+					return
+				}
+				if(layer=='Setting'){
+					showTab('options-tab')
+					getActiveClass('Setting')
+					return
+				}
+				if(layer=='Changelog'){
+					showTab('changelog-tab')
+					getActiveClass('Changelog')
+					return
+				}
 				if (shiftDown) player[layer].forceTooltip = !player[layer].forceTooltip
 				else if(tmp[layer].isLayer) {
 					if (tmp[layer].leftTab) {
@@ -28,6 +62,8 @@ var systemComponents = {
 						showTab(layer, prev)
 				}
 				else {run(layers[layer].onClick, layers[layer])}
+
+				getActiveClass(layer)
 			}"
 
 
@@ -36,7 +72,7 @@ var systemComponents = {
 				treeButton: !tmp[layer].isLayer,
 				smallNode: size == 'small',
 				[layer]: true,
-				tooltipBox: true,
+				tooltipBox: false,
 				forceTooltip: player[layer].forceTooltip,
 				ghost: tmp[layer].layerShown == 'ghost',
 				hidden: !tmp[layer].layerShown,
@@ -45,31 +81,30 @@ var systemComponents = {
 				resetNotify: tmp[layer].prestigeNotify,
 				can: ((player[layer].unlocked || tmp[layer].canReset) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
 				front: !tmp.scrolled,
+				active: player.tab==layer,
 			}"
 			v-bind:style="constructNodeStyle(layer)">
 			<span v-html="(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'"></span>
 			<tooltip
       v-if="tmp[layer].tooltip != ''"
 			:text="(tmp[layer].isLayer) ? (
-				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + (options.ch?tmp[layer].resource:tmp[layer].resourceEN))
-				: (tmp[layer].tooltipLocked ? options.ch? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : (options.ch?'达到 ':'Reach ') + formatWhole(tmp[layer].requires) + ' ' + (options.ch?tmp[layer].baseResource:tmp[layer].baseResourceEN) + (options.ch?' 以解锁 (你有 ':' to unlock (You have ') + formatWhole(tmp[layer].baseAmount) + ' ' + (options.ch?tmp[layer].baseResource:tmp[layer].baseResourceEN) + ')')
+				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + ((options.ch || modInfo.languageMod==false)?tmp[layer].resource:tmp[layer].resourceEN))
+				: (tmp[layer].tooltipLocked ? (options.ch || modInfo.languageMod==false)? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : ((options.ch || modInfo.languageMod==false)?'达到 ':'Reach ') + formatWhole(tmp[layer].requires) + ' ' + ((options.ch || modInfo.languageMod==false)?tmp[layer].baseResource:tmp[layer].baseResourceEN) + ((options.ch || modInfo.languageMod==false)?' 以解锁 (你有 ':' to unlock (You have ') + formatWhole(tmp[layer].baseAmount) + ' ' + ((options.ch || modInfo.languageMod==false)?tmp[layer].baseResource:tmp[layer].baseResourceEN) + ')')
 			)
 			: (
 				tmp[layer].canClick ? (tmp[layer].tooltip ? tmp[layer].tooltip : 'I am a button!')
-				: (tmp[layer].tooltipLocked ? options.ch? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : 'I am a button!')
+				: (tmp[layer].tooltipLocked ? (options.ch || modInfo.languageMod==false)? tmp[layer].tooltipLocked : tmp[layer].tooltipLockedEN : 'I am a button!')
 			)"></tooltip>
 			<node-mark :layer='layer' :data='tmp[layer].marked'></node-mark></span>
 		</button>
 		`
 	},
-
 	
 	'layer-tab': {
 		props: ['layer', 'back', 'spacing', 'embedded'],
 		template: `<div v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}]" class="noBackground">
-		<div v-if="back"><button v-bind:class="back == 'big' ? 'other-back' : 'back'" v-on:click="goBack(layer)">←</button></div>
 		<div v-if="!tmp[layer].tabFormat">
-			<div v-if="spacing" v-bind:style="{'height': spacing}" :key="this.$vnode.key + '-spacing'"></div>
+            <div v-html="getPointsDisplay()"></div>
 			<infobox v-if="tmp[layer].infoboxes" :layer="layer" :data="Object.keys(tmp[layer].infoboxes)[0]":key="this.$vnode.key + '-info'"></infobox>
 			<main-display v-bind:style="tmp[layer].componentStyles['main-display']" :layer="layer"></main-display>
 			<div v-if="tmp[layer].type !== 'none'">
@@ -88,9 +123,7 @@ var systemComponents = {
 			<br><br>
 		</div>
 		<div v-if="tmp[layer].tabFormat">
-			<div v-if="Array.isArray(tmp[layer].tabFormat)"><div v-if="spacing" v-bind:style="{'height': spacing}"></div>
-				<column :layer="layer" :data="tmp[layer].tabFormat" :key="this.$vnode.key + '-col'"></column>
-			</div>
+			<column :layer="layer" :data="tmp[layer].tabFormat" :key="this.$vnode.key + '-col'"></column>
 			<div v-else>
 				<div class="upgTable" v-bind:style="{'padding-top': (embedded ? '0' : '25px'), 'margin-top': (embedded ? '-10px' : '0'), 'margin-bottom': '24px'}">
 					<tab-buttons v-bind:style="tmp[layer].componentStyles['tab-buttons']" :layer="layer" :data="tmp[layer].tabFormat" :name="'mainTabs'"></tab-buttons>
@@ -103,90 +136,101 @@ var systemComponents = {
 	},
 
 	'overlay-head': {
-		template: `			
-		<div class="overlayThing" style="padding-bottom:7px; width: 90%; z-index: 1000; position: relative">
-		<span v-if="player.devSpeed && player.devSpeed != 1" class="overlayThing">
-			<br>
-			<div v-if=options.ch>时间加速: {{format(player.devSpeed)}}x</div>
-			<div v-else>Dev Speed: {{format(player.devSpeed)}}x</div>
-		</span>
-		<span v-if="player.offTime !== undefined"  class="overlayThing">
-			<br>
-			<div v-if=options.ch>离线加速剩余时间: {{formatTime(player.offTime.remain)}}</div>
-			<div v-else>Offline Time: {{formatTime(player.offTime.remain)}}</div>
-			<br>
-		</span>
-		<br>
-		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks<=0 && options.ch !== undefined">n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2>
-
-		<h2 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1 && options.ch !== undefined">n<sub>s</sub>({{format(player.value)}}) = {{format(player.superValue)}}</h2>
-		<h3 class="overlayThing" id="points" v-if="tmp.co.unlocks>=1 && options.ch !== undefined"><br>n({{format(player.points)}}{{!tmp.timeSpeed.eq(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h3>
-
-		<br>
-
-		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks<=0 && options.ch !== undefined">n(t) = <span v-html="displayFormula()"></span></span>
-		
-		<span class="overlayThing" style="font-size: 20px;" v-if="tmp.co.unlocks>=1 && options.ch !== undefined">n<sub>s</sub>(n) = <span v-html="displayFormulaSuper()"></span></span>
-		<br>
-		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
-	</div>
-	`
+		template: `
+		`
     },
 
     'info-tab': {
         template: `
-        <div>
-        <h2>{{options.ch?modInfo.name:modInfo.nameEN}}</h2>
-        <br>
-        <h3>{{VERSION.withName}}</h3>
-        <span v-if="modInfo.author">
-            <br>
-            {{options.ch?'制作者: '+modInfo.author : 'Authors: '+modInfo.authorEN}}	
-        </span>
-        <br>
-        The Modding Tree <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >{{TMT_VERSION.tmtNum}}</a> by Acamaeda
-        <br>
-        The Prestige Tree made by Jacorb and Aarex
-		<br><br>
-		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
-        <span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
-        <a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
-        <a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br><br>
-        <a class="link" href="https://afdian.net/@Mysterious124" target="_blank" v-bind:style="{'font-size': '16px'}">Shinwmyste Game Discord</a><br>
-		<br><br>
-        Time Played: {{ formatTime(player.timePlayed) }}<br><br>
+        <div><br><br><br>
+        <h1>{{(options.ch || modInfo.languageMod==false)?modInfo.name:modInfo.nameEN}}</h1>
+        <br><br><br>
+
+        <h2>{{ (options.ch || modInfo.languageMod==false)?"参与人员":"Authors" }}:</h2><br><br>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"本模组作者":"Mod Author" }}:</h3><br>
+			{{ modInfo.author }}<br><br>
+			<h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"本Mod基于Shinwmyste的The Modding Table制作":"Based On Shinwmyste\'s The Modding Table" }})</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"模组页主要作者":"The Modding Table Author" }}:</h3><br>
+			Shinwmyste<br><br><h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"制作":"Developed" }} The Modding Tree <a v-bind:href="'https://github.com/shenmi124/The-Modding-Table/blob/main/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '10px', 'display': 'inline'}">{{TMT_VERSION.newtmtNum}}</a>)</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"模组页主要帮助者":"The Modding Table Main Helper" }}:</h3><br>
+			QwQe308<br><br>
+			<h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"一些零碎的改动":"Made Some Minor Changes" }})</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"模板支持":"Original TMT Author" }}:</h3><br>
+			Acamaeda<br><br>
+			<h6 style="color:#aaa">(The Modding Tree <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '10px', 'display': 'inline'}">{{TMT_VERSION.tmtNum}}</a>)</h6>
+		</div>
+		<br><br><br><br>
+
+        <h2>{{ (options.ch || modInfo.languageMod==false)?"统计数据":"Statistics" }}:</h2><br><br>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"游戏时长":"Game Time" }}:</h3><br>
+			{{ formatTime(player.timePlayed) }}<br><br>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ modInfo.pointsName }}:</h3><br>
+			{{ format(player.points) }}<br><br>
+		</div>
+
+		<br><br><br><br>
+		
+        <h2>{{ (options.ch || modInfo.languageMod==false)?"其他页面":"Other Pages" }}:</h2><br><br>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"Shinwmyste的Discord":"Shinwmyste's Discord" }}:</h3><br>
+			<a class="link" href="https://discord.gg/DTJYvatRQA" target="_blank">{{ (options.ch || modInfo.languageMod==false)?"点击跳转":"Click Here" }}</a><br>
+			<h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"快点来,非常好玩":"Enjoy Yourself There!" }})</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"捐助页面":"Donate Page" }}:</h3><br>
+			<a class="link" href="https://afdian.net/@Mysterious124" target="_blank">{{ (options.ch || modInfo.languageMod==false)?"点击跳转":"Click Here" }}</a><br>
+			<h6 style="color:#aaa">($_$)</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"更新日志":"Changelog" }}:</h3><br>
+			<a class="link" onclick="showTab('changelog-tab');getActiveClass('Changelog')">{{ (options.ch || modInfo.languageMod==false)?"点击跳转":"Click Here" }}</a><br>
+			<h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"其实也可以点右上角的版本号":"The Top-Right Version Button Matters" }})</h6>
+		</div>
+		<div style="border: 3px solid #888; width:300px; height:30px; margin-top: 8px; padding:15px; border-radius: 5px; display: inline-table">
+			<h3>{{ (options.ch || modInfo.languageMod==false)?"模组树Discord":"The Modding Tree Discord" }}:</h3><br>
+			<a class="link" href="https://discord.gg/F3xveHV" target="_blank">{{ (options.ch || modInfo.languageMod==false)?"点击跳转":"Click Here" }}</a><br>
+			<h6 style="color:#aaa">({{ (options.ch || modInfo.languageMod==false)?"就是这些":"That\'s all" }})</h6>
+		</div>
     `
     },
 
     'options-tab': {
-        template: `
-        <table>
+        template: ` 
+        <table><br><br><br><br><br><br>
             <tr>
-				<td><button class="opt" onclick="save()">{{options.ch?'本地存档' :'Save'}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('autosave')">{{options.ch?'自动存档' :'AutoSave'}}: {{ options.autosave?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
-                <td><button class="opt" onclick="hardReset()">{{options.ch?'硬重置(删除存档)' :'HardReset'}}</button></td>
-			</tr>
+				<td><button class="opt" onclick="save()">{{(options.ch || modInfo.languageMod==false)?'本地存档' :'Save'}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('autosave')">{{(options.ch || modInfo.languageMod==false)?'自动存档' :'AutoSave'}}: {{ options.autosave?((options.ch || modInfo.languageMod==false)?"已开启":"ON"):((options.ch || modInfo.languageMod==false)?"已关闭":"OFF") }}</button></td>
+                <td><button class="opt" onclick="hardReset()">{{(options.ch || modInfo.languageMod==false)?'硬重置(删除存档)' :'HardReset'}}</button></td>
+				<td><button class="opt" onclick="exportSave()">{{(options.ch || modInfo.languageMod==false)?'导出存档(复制到黏贴板)' :'Export'}}</button></td>
+				<td><button class="opt" onclick="importSave()">{{(options.ch || modInfo.languageMod==false)?'导入存档':'Import'}}</button></td>
+			</tr><br>
 			<tr>
-                <td><button class="opt" onclick="exportSave()">{{options.ch?'导出存档(复制到黏贴板)' :'Export'}}</button></td>
-                <td><button class="opt" onclick="importSave()">{{options.ch?'导入存档':'Import'}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('offlineProd')">{{options.ch?'离线进度' :'Offline Prod'}}: {{ options.offlineProd?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
-            </tr>
+                <td><button class="opt" onclick="toggleOpt('offlineProd')">{{(options.ch || modInfo.languageMod==false)?'离线进度' :'Offline Prod'}}: {{ options.offlineProd?((options.ch || modInfo.languageMod==false)?"已开启":"ON"):((options.ch || modInfo.languageMod==false)?"已关闭":"OFF") }}</button></td>
+            </tr><br>
             <tr>
-                <td><button class="opt" onclick="switchTheme()">{{options.ch?'背景主题':'Theme'}}: {{ getThemeName() }}</button></td>
-                <td><button class="opt" onclick="adjustMSDisp()">{{options.ch?'显示里程碑':'Show Milestones'}}: {{options.ch? MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)] : MS_DISPLAYS_EN[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hqTree')">{{options.ch?'高质量树':'High-Quality Tree'}}: {{ options.hqTree?(options.ch?"已开启":"ON"):(options.ch?"已关闭":"OFF") }}</button></td>
-            </tr>
-            <tr>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">{{options.ch?'已完成挑战':'Completed Challenges'}}: {{ options.hideChallenges?(options.ch?"隐藏":"HIDDEN"):(options.ch?"显示":"SHOWN") }}</button></td>
-                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">{{options.ch?'节点内容占据整个屏幕':'Single-Tab Mode'}}: {{ options.forceOneTab?(options.ch?"永远这样":"ALWAYS"):(options.ch?"自动调节":"AUTO") }}</button></td>
-			</tr> 
-			<br>
+                <td><button class="opt" onclick="toggleOpt('hideChallenges')">{{(options.ch || modInfo.languageMod==false)?'已完成挑战':'Completed Challenges'}}: {{ options.hideChallenges?((options.ch || modInfo.languageMod==false)?"隐藏":"HIDDEN"):((options.ch || modInfo.languageMod==false)?"显示":"SHOWN") }}</button></td>
+                <td><button class="opt" onclick="adjustMSDisp()">{{(options.ch || modInfo.languageMod==false)?'显示里程碑':'Show Milestones'}}: {{(options.ch || modInfo.languageMod==false)? MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)] : MS_DISPLAYS_EN[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
+			</tr> <br>
 			<tr>
-				<td><button class="opt" onclick="
-                options.ch = !options.ch;
-                needsCanvasUpdate = true; document.title = options.ch?'公式树NG--':'The Formula NG--';
-                VERSION.withName = VERSION.withoutName + (VERSION.name ? ': ' + (options.ch? VERSION.name :VERSION.nameEN) : '')
-                ">{{options.ch?'语言':'Language'}}: {{ options.ch?"中文(Chinese)":"英文(English)" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('mouse')">{{(options.ch || modInfo.languageMod==false)?'优化鼠标操作' :'Optimized mouse operation'}}: {{ options.mouse ? ((options.ch || modInfo.languageMod==false)?"已开启":"ON"):((options.ch || modInfo.languageMod==false)?"已关闭":"OFF")}}</button></td>
+			</tr><br>
+			<tr>
+				<td><button class="opt" v-if="modInfo.otherLanguageMod==true" onclick="
+                options.ch=!options.ch;
+                needsCanvasUpdate = true; document.title = ((options.ch || modInfo.languageMod==false)? modInfo.name : modInfo.nameEN);
+                VERSION.withName = VERSION.withoutName + (VERSION.name ? ': ' + ((options.ch || modInfo.languageMod==false)? VERSION.name :VERSION.nameEN) : '');
+				setupModInfo();
+                ">{{(options.ch || modInfo.languageMod==false)?'语言':'Language'}}: {{ (options.ch || modInfo.languageMod==false)?"中文(Chinese)":"英文(English)" }}</button></td>
 			</tr>
         </table>`
     },
@@ -234,4 +278,3 @@ var systemComponents = {
 	}
 
 }
-

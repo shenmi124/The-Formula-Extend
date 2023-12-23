@@ -1,17 +1,46 @@
 /* Tree nodes, button nodes, and side layers */
 .treeNode {
-	height: 100px;
-	min-width: 100px;
-	border: var(--hqProperty1);
+	height: var(--tabHeight);
+	width: calc(var(--tabWidth) - 5px);
+	border: var(--tabBorder) solid;
 	border-radius: 0%;
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
-	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	text-align: left;
+	font-size: var(--tabFont);
+	font-family: "Courier New", "Courier Prime", "Lucida Console",cursive, monospace;
+	font-weight: bold;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
-	padding: 0;
-	margin: 0 20px 0 20px;
+	margin: 0;
+	left: -3px;
+	top: 2px;
+	transition-duration: 0.5s;
+    position: relative;
+}
+
+.treeNode.small {
+	height: var(--tabHeight);
+	width: calc(var(--tabWidth) - 5px);
+	border: 3px solid;
+	border-left: none;
+	border-right: none;
+	border-top-color: rgb(223, 223, 223);
+    border-right-color: rgb(223, 223, 223);
+    border-bottom-color: rgb(223, 223, 223);
+	border-radius: 0%;
+	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
+	text-align: center;
+	font-size: var(--tabFont);
+	font-family: "Courier New", "Courier Prime", "Lucida Console",cursive,monospace;
+	font-weight: bold;
+	color: rgba(0, 0, 0, 0.5);
+	text-shadow: var(--hqProperty3);
+	margin: 0;
+	left: -3px;
+	top: 2px;
+	transition-duration: 0.5s;
+    position: relative;
 }
 
 .treeButton {
@@ -22,10 +51,11 @@
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "Courier New", "Courier Prime", "Lucida Console",cursive, monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
+    position: relative;
 }
 
 .smallNode {
@@ -33,24 +63,50 @@
 	width: 60px;
 	font-size: 30px;
 	margin: 50px 105px 0px 10px;
+    position: relative;
 }
 
 .resetNotify {
-	box-shadow: var(--hqProperty2a), 0 0 8px #ffffff;
+	text-shadow: #6d6d6d 2px 2px;
 }
 
-.treeNode.can:hover {
-	transform: scale(1.15, 1.15);
-	box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
+.treeNode.can:not(.small).active {
+	transition-duration: 0.2s;
+	transform: scale(1, 1);
+	box-shadow: 0 0 0px var(--points);
+	padding-left: 20px;
+	color: black;
+	text-shadow: rgb(88, 88, 88) 1px 1px;
+    position: relative;
 }
 
+.treeNode.can:not(.active):not(.small):hover {
+	transition-duration: 0.2s;
+	transform: scale(1, 1);
+	box-shadow: 0 0 0px var(--points);
+	padding-left: 15px;
+	color: black;
+    position: relative;
+}
+
+.treeNode.can.small.active {
+	transform: scale(1, 1);
+	box-shadow: 0 0 0px var(--points);
+	color: black;
+    position: relative;
+}
+
+.treeNode.can.small:hover {
+	transform: scale(1, 1);
+	box-shadow: 0 0 0px var(--points);
+	color: black;
+    position: relative;
+}
 .notify {
 	transform: scale(1.05, 1.05);
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), 0 0 20px #ff0000;
 }
-
-
 
 .mark {
 	position: relative;

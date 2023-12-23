@@ -13,7 +13,9 @@ function getStartOptions() {
 		showStory: true,
 		forceOneTab: false,
 		oldStyle: false,
+		tooltipForcing: true,
 		ch: undefined,
+		mouse: true,
 	}
 }
 
@@ -22,6 +24,9 @@ function toggleOpt(name) {
 		return;
 
 	options[name] = !options[name];
+	if(name == 'mouse'){
+		mouseSetting()
+	}
 	if (name == "hqTree")
 		changeTreeQuality();
 	if (name == "oldStyle")
@@ -46,8 +51,8 @@ function toggleAuto(toggle) {
 	needCanvasUpdate=true
 }
 
-const MS_DISPLAYS_EN = ["ALL", "LAST, AUTO, INCOMPLETE", "AUTOMATION, INCOMPLETE", "INCOMPLETE", "NONE"];
 const MS_DISPLAYS = ["所有", "最后一个, 自动化, 未完成", "自动化, 未完成", "未完成", "无"];
+const MS_DISPLAYS_EN = ["ALL", "LAST, AUTO, INCOMPLETE", "AUTOMATION, INCOMPLETE", "INCOMPLETE", "NONE"];
 
 const MS_SETTINGS = ["always", "last", "automation", "incomplete", "never"];
 
@@ -76,4 +81,41 @@ function milestoneShown(layer, id) {
 			break;
 	}
 	return false;
+}
+
+function mouseSetting(){
+	if(options.mouse==true){
+		document.oncontextmenu = function(event){
+			event.preventDefault()
+		}
+	
+		if(document.all){
+			document.onselectstart = function(){
+				return false
+			}
+		}else{
+			document.onmousedown = function(){
+				return false
+			}
+			document.onmouseup = function(){
+				return true
+			}
+		}
+	}else{
+		document.oncontextmenu = function(event){
+		}
+	
+		if(document.all){
+			document.onselectstart = function(){
+				return true
+			}
+		}else{
+			document.onmousedown = function(){
+				return true
+			}
+			document.onmouseup = function(){
+				return false
+			}
+		}
+	}
 }

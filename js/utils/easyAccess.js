@@ -73,5 +73,3 @@ function achievementEffect(layer, id) {
 function gridEffect(layer, id) {
 	return (gridRun(layer, 'getEffect', player[layer].grid[id], id))
 }
-
-// Try looking in Old Things/2.0-format-changes.md
