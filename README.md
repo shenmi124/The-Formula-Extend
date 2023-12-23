@@ -1,4 +1,4 @@
-# The-Formula-Extend
+# The-Formula-Extended
 by Shinwmste
 
 A extended version of [The Formula](https://github.com/Jacorb90/The-Formula) .
