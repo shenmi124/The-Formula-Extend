@@ -142,7 +142,6 @@ addLayer("OtherTab small", {
     tooltip(){return false},
     layerShown(){return layerDisplayTotal(['Setting','Statistics','Information','Changelog'])},
     tabFormat: [
-        ["display-text", function() { return getPointsDisplay() }],
     ],
 })
 
@@ -162,7 +161,6 @@ addLayer("Setting", {
     type: "none",
     tooltip(){return false},
     tabFormat: [
-        ["display-text", function() { return getPointsDisplay() }],
     ],
 })
 
@@ -182,7 +180,6 @@ addLayer("Information", {
     type: "none",
     tooltip(){return false},
     tabFormat: [
-        ["display-text", function() { return getPointsDisplay() }],
     ],
 })
 
@@ -202,6 +199,5 @@ addLayer("Changelog", {
     type: "none",
     tooltip(){return false},
     tabFormat: [
-        ["display-text", function() { return getPointsDisplay() }],
     ],
 })

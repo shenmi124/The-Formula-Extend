@@ -709,7 +709,7 @@ addLayer("meta", {
         ["display-text", function() {return '↓ ↓ ↓'}],
         ["display-text", function() {return '<big>ShArD('+format(player.meta.mirror,0)+') = '+tmp[this.layer].displayFormula[0]+'</big>'}],
         ["display-text", function() {return '↓ ↓ ↓'}],
-        ["display-text", function() {return options.ch?'<i style="color:#aaa">目前ShArD未在任何公式中出现</i>':'<i style="color:#aaa">Currently ShArD does nothing</i>'}],
+        ["display-text", function() {return options.ch?'<i style="color:#aaa">SharD(凌片)>=10000 以结束游戏</i>':'<i style="color:#aaa">SharD(ShArDs)>=10000 to complete the game</i>'}],
         ["blank", "25px"],
         ["blank", "25px"],
         ["blank", "25px"],

@@ -523,7 +523,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.meta.mirrorGain.gte(100)
+	return player.meta.mirror.gte(10000)
 }
 
 
