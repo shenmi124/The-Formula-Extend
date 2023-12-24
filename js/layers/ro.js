@@ -26,7 +26,7 @@ addLayer("ro", {
         valueC: new Decimal(0),
         valueCPower: new Decimal(0),
 
-        last: '无上次记录',
+        last: '',
 
         autoSpinTimer:n(0),
     }},
@@ -86,7 +86,7 @@ addLayer("ro", {
     },
     update(diff) {
         if(player.ro.last=='none'){
-            player.ro.last = '无上次记录'
+            player.ro.last = ''
         }
 
         player.ro.value = n(tmp.ro.calculateValue)

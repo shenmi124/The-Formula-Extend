@@ -421,8 +421,8 @@ let goalAchData = {
         name: "何为极限值?",
         nameEN: "Where's limit?",
         done() { return player.a2.points.gte(300) },
-        tooltip: "获得300阿尔法能量",
-        tooltipEN: "Get 300 Alpha Energy",
+        tooltip: "获得500阿尔法能量",
+        tooltipEN: "Get 500 Alpha Energy",
         unlocked() { return hasAchievement(this.layer, 91) },
     },
     95: {

@@ -560,48 +560,13 @@ addLayer("meta", {
 		},
 	},
     clickables:brokenSetAble(),
-	microtabs:{
+	/*microtabs:{
         "主要":{
 			"回切任务":{
 				content:[
-                    ["blank", "25px"],
-                    ["display-text", function() {return options.ch?'<span style="color:#aaa">————长按以构建————</span>':'<span style="color:#aaa">————Hold to Build————</span>'}],
-                    ["blank", "25px"],
-					['row',[["buyable", 11],["buyable", 12],["buyable", 13],["buyable", 14]]],
-					['row',[["buyable", 21],["buyable", 22],["buyable", 23]]],
-					['row',[["buyable", 31],["buyable", 32]]],
-					['row',[["buyable", 41]]],
-                    ["blank", "100px"],
-                    ["display-text", function() {return options.ch?'回切进度':"Loop Progress"}],
-                    ["display-text", function() {return '('+format(player.meta.exp)+'%)'+(player.meta.levelCost.gt(100) ? ' -> ('+format(player.meta.levelCost)+'%)' : '')}],
-                    ["bar", "echeprogress2"],
-                    ["display-text", function() {
-                        let a = n(1)
-                        let c = [11,12,13,14,21,22,23,31,32,41]
-                        for(let i = 0;i<=999;i++){
-                            if(c[i]!==undefined){
-                                if(player.meta.levelTotal.gte(tmp.meta.buyables[c[i]].unlocks)){
-                                    if(c[i+1]==undefined){
-                                        return options.ch?'<br><span id="points" style="color:#aaa">没有更多任务了</span><br>下一回切指数塔: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(player.meta.towerCost,0)+'</h2>'
-                                        :'<br><span id="points" style="color:#aaa">No More Quests</span><br>Next Loop Power Tower: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(player.meta.towerCost,0)+'</h2>'
-                                    }else{
-                                        a = tmp.meta.buyables[c[i+1]].unlocks
-                                    }
-                                }else{
-                                    break
-                                }
-                            }else{
-                                return options.ch?'<br><span id="points" style="color:#aaa">没有更多任务了</span>'
-                                :'<br><span id="points" style="color:#aaa">No More Quests</span>'
-                            }
-                        }
-                        return options.ch?'<br>下一回切任务: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(a,0)+'</h2>'
-                        :'Next Loop Quest: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(a,0)+'</h2>'
-                    }],
-                    ["blank", "100px"],
 				]
 			},
-			/* "元破碎":{
+			 "元破碎":{
                 unlocked(){return player.meta.buyables[41].gte(7500)},
 				content:[
                     ["blank", "7px"],
@@ -620,9 +585,9 @@ addLayer("meta", {
                     ["blank", "5px"],
                     ["microtabs", "监视器"],
 				]
-			},*/
+			},
 		}, 
-        /* "破碎":{
+         "破碎":{
             "破碎集合":{
                 buttonStyle(){return{'border-color': '#aaa'}},
                 unlocked(){return player.meta.tower.gte(1)},
@@ -709,8 +674,8 @@ addLayer("meta", {
                     ["blank", "100px"],
                 ]
             },
-		},*/
-    }, 
+		},
+    }, */
     displayFormula() {
         let f = "0";
 
@@ -745,7 +710,41 @@ addLayer("meta", {
         ["display-text", function() {return options.ch?'<i style="color:#aaa">目前ShArD未在任何公式中出现</i>':'<i style="color:#aaa">Currently ShArD does nothing</i>'}],
         ["blank", "25px"],
         ["blank", "25px"],
-        ["microtabs", "主要"],
+        ["blank", "25px"],
+        ["display-text", function() {return options.ch?'<span style="color:#aaa">————长按以构建————</span>':'<span style="color:#aaa">————Hold to Build————</span>'}],
+        ["blank", "25px"],
+        ['row',[["buyable", 11],["buyable", 12],["buyable", 13],["buyable", 14]]],
+        ['row',[["buyable", 21],["buyable", 22],["buyable", 23]]],
+        ['row',[["buyable", 31],["buyable", 32]]],
+        ['row',[["buyable", 41]]],
+        ["blank", "100px"],
+        ["display-text", function() {return options.ch?'回切进度':"Loop Progress"}],
+        ["display-text", function() {return '('+format(player.meta.exp)+'%)'+(player.meta.levelCost.gt(100) ? ' -> ('+format(player.meta.levelCost)+'%)' : '')}],
+        ["bar", "echeprogress2"],
+        ["display-text", function() {
+            let a = n(1)
+            let c = [11,12,13,14,21,22,23,31,32,41]
+            for(let i = 0;i<=999;i++){
+                if(c[i]!==undefined){
+                    if(player.meta.levelTotal.gte(tmp.meta.buyables[c[i]].unlocks)){
+                        if(c[i+1]==undefined){
+                            return options.ch?'<br><span id="points" style="color:#aaa">没有更多任务了</span><br>下一回切指数塔: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(player.meta.towerCost,0)+'</h2>'
+                            :'<br><span id="points" style="color:#aaa">No More Quests</span><br>Next Loop Power Tower: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(player.meta.towerCost,0)+'</h2>'
+                        }else{
+                            a = tmp.meta.buyables[c[i+1]].unlocks
+                        }
+                    }else{
+                        break
+                    }
+                }else{
+                    return options.ch?'<br><span id="points" style="color:#aaa">没有更多任务了</span>'
+                    :'<br><span id="points" style="color:#aaa">No More Quests</span>'
+                }
+            }
+            return options.ch?'<br>下一回切任务: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(a,0)+'</h2>'
+            :'Next Loop Quest: <h2 id="points">'+format(player.meta.level,0)+'</h2> / <h2 id="points" style="color:#aaa">'+format(a,0)+'</h2>'
+        }],
+        ["blank", "100px"],
     ],
     layerShown() { return tmp.goals.unlocks>=8},
     componentStyles: {
