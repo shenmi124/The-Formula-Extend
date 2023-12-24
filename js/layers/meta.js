@@ -117,6 +117,8 @@ addLayer("meta", {
         },
     },
     update(diff) {
+        player.subtabs.meta = null
+        
         player.meta.towerCost = n(10).pow(player.meta.tower.add(1)).mul(15).pow(1.3786).floor()
 
         let base = n(100)//.add(player.meta.level.sub(100).max(0)).add(player.meta.levelTotal.sub(200).mul(50).max(0))
