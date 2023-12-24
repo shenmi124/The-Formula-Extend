@@ -97,7 +97,8 @@ addLayer("b", {
     ],
     displayFormula() {
         let p = tmp.ac.unlocks>=6 ? '<sup>2</sup>' : ''
-        let f = "B"+p+" - 0.5 + n<sub>s</sub><sup>0.35</sup>";
+        let f = "B"+p+" - 0.5"
+        if(player.co.unlocks>=1){t += ' + n<sub>s</sub><sup>0.35</sup>'}
         return f;
     },
     displayFormulaData() {
