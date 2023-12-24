@@ -34,9 +34,9 @@ addLayer("a2", {
         let amt = 0
         if(tmp.ac.unlocks>=6 && player.a2.points.gte(300)){
             if(player.a.value.gte(tmp[this.layer].getNextAt)){
-                player.a2.autoGainTimer = player.a2.autoGainTimer.add(0)
+                player.a2.autoGainTimer = player.a2.autoGainTimer.add(getAutoA2GainTimer())
                 let p = tmp.co.unlocks>=1 && tmp.ac.unlocks>=6 && player.a2.points.gte(400) ? player.co.effectO : n(1)/*!注意一下 p的公式也挪到这里了!*/
-                let maxAmt = player.a.value.root(p).log(10).add(299).sub(player.a2.points).max(0).floor()
+                let maxAmt = player.a.value.root(p).log(10).add(300).sub(player.a2.points).max(0).floor()
                 let timeAmt = player.a2.autoGainTimer.div(getAutoA2GainTimer()).floor()
                 player.a2.autoGainTimer = player.a2.autoGainTimer.sub(getAutoA2GainTimer().mul(timeAmt))
                 return maxAmt.min(timeAmt)
@@ -66,7 +66,7 @@ addLayer("a2", {
     },
     prestigeButtonTextEN() {
         let text = "Reset for "+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> Alpha Energy<br><br>";
-        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) ? 'You cannot get more Alpha Energy' : "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
+        text += n(tmp[this.layer].getResetGain).add(player.a2.points).gte(300) && tmp.ac.unlocks<=5 ? 'You cannot get more Alpha Energy' : "Req: a(A) ≥ "+format(tmp[this.layer].getNextAt)
         return text;
     },
     row: 1,
