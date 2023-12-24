@@ -106,7 +106,7 @@ function displayFormula() {
 		b2 = 'b × 200'
 	}
 
-	let f = colorText('lg(', 1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)],'max',[b+" × a",b2])+' ) '+colorText(' )', 1)
+	let f = colorText('lg(', 1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)).mul(player.a.value),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)],'max',[b+" × a",b2])+' ) '+colorText(' )', 1)
 	let m = ''
 	let g3 = ''
 	let f3 = ''
@@ -117,7 +117,7 @@ function displayFormula() {
 	}
 
 	if(tmp.goals.unlocks>=1){
-		f = colorText('lg(', 1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)], 'max', [b+" × a",b2])+' )<sup>exp</sup>'+colorText(' × ', 1)
+		f = colorText('lg(', 1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)).mul(player.a.value),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)], 'max', [b+" × a",b2])+' )<sup>exp</sup>'+colorText(' × ', 1)
 		m = colorText(' mul', 1)
 	}
 
@@ -159,7 +159,7 @@ function displayIntFormula() {
 		b2 = format(player.b.value.mul(200))
 	}
 
-	let f = colorText('lg(',1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)],'max',[b+" × "+format(player.a.value),format(b2)])+' ) '+colorText(' )',1)
+	let f = colorText('lg(',1)+' Max( '+maxText([player.points.mul(tmp.timeSpeed).pow(player.b.points.gte(1) ? (player.b.value.add(player.ro.valueA.gte(1) ? player.ro.valueA : n(1)).log(3).add(1)) : n(1)).mul(player.a.value),player.b.points.gte(1) ? player.b.points.mul(200) : n(1)],'max',[b+" × "+format(player.a.value),format(b2)])+' ) '+colorText(' )',1)
 	let m = ''
 	let g3 = ''
 	let f3 = ''
