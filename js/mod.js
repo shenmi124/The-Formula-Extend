@@ -243,7 +243,11 @@ function calculateValueSuper(t) {
 
 function updateValue() {
 	player.value = calculateValue(player.points.times(tmp.timeSpeed));
-	player.superValue = calculateValueSuper(player.value);
+	if(tmp.co.unlocks>=1){
+		player.superValue = calculateValueSuper(player.value);
+	}else{
+		player.superValue = n(0)
+	}
 }
 
 // Set your version in num and name
