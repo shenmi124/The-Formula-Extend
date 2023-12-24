@@ -295,7 +295,7 @@ let goalAchData = {
         done() { return player.value.gte(n("1.797e308").pow(0.5)) },
         tooltip: "让 n(t) ≥ "+format(n("1.797e308").pow(0.5)),
         tooltipEN: "Make n(t) ≥ "+format(n("1.797e308").pow(0.5)),
-        unlocked() { return hasAchievement(this.layer, 65) }
+        unlocked() { return hasAchievement(this.layer, 62) }
     },
     71: {
         name: "新社会",
@@ -420,9 +420,9 @@ let goalAchData = {
     94: {
         name: "何为极限值?",
         nameEN: "Where's limit?",
-        done() { return player.a2.points.gte(500) },
-        tooltip: "获得500阿尔法能量",
-        tooltipEN: "Get 500 Alpha Energy",
+        done() { return player.a2.points.gte(300) },
+        tooltip: "获得300阿尔法能量",
+        tooltipEN: "Get 300 Alpha Energy",
         unlocked() { return hasAchievement(this.layer, 91) },
     },
     95: {
