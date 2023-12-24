@@ -233,7 +233,6 @@ function calculateValue(t) {
 	if(tmp.co.unlocks>=1){
 		f = f.mul(player.superValue.pow(0.5).factorial())
 	}
-	console.log(t)
 	return f.pow(powG).pow(player.co.effect)
 }
 
